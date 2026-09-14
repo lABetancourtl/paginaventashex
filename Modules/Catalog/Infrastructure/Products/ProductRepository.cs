@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PaginaVentasNet.Api.Data;
+using PaginaVentasNet.Api.Modules.Catalog.Application.Products.Dtos;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Products.Ports;
 using PaginaVentasNet.Api.Modules.Catalog.Domain;
 
@@ -28,5 +29,25 @@ public class ProductRepository : IProductRepository
     public async Task SaveChangesAsync()
     {
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<List<ProductResponseDto>> GetAllAsync()
+    {
+        return await _context.Products
+            .Include(p => p.Category)
+            .Select(p => new ProductResponseDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Description = p.Description,
+                Price = p.Price,
+                Sku = p.Sku,
+                Stock = p.Stock,
+                IsActive = p.IsActive,
+                CategoryId = p.CategoryId,
+                CategoryName = p.Category!.Name,
+                CreatedAtUtc = p.CreatedAtUtc
+            })
+            .ToListAsync();
     }
 }

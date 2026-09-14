@@ -55,6 +55,7 @@ builder.Services.AddScoped<GetCategoriesUseCase>();
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<CreateProductUseCase>();
+builder.Services.AddScoped<GetProductsUseCase>();
 
 var app = builder.Build();
 

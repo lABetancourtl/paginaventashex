@@ -10,10 +10,14 @@ namespace PaginaVentasNet.Api.Modules.Catalog.Presentation;
 public class ProductController : ApiController
 {
     private readonly CreateProductUseCase _createProductUseCase;
+    private readonly GetProductsUseCase _getProductsUseCase;
 
-    public ProductController(CreateProductUseCase createProductUseCase)
+    public ProductController(
+        CreateProductUseCase createProductUseCase,
+        GetProductsUseCase getProductsUseCase)
     {
         _createProductUseCase = createProductUseCase;
+        _getProductsUseCase = getProductsUseCase;
     }
 
     [HttpPost]
@@ -32,5 +36,12 @@ public class ProductController : ApiController
         {
             return Failure<int>("PRODUCT_VALIDATION", ex.Message, 400);
         }
+    }
+
+        [HttpGet]
+    public async Task<ActionResult<ApiResponse<List<ProductResponseDto>>>> GetAll()
+    {
+        var products = await _getProductsUseCase.ExecuteAsync();
+        return Success(products);
     }
 }
