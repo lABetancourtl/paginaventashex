@@ -1,6 +1,8 @@
 using PaginaVentasNet.Api.Modules.Catalog.Domain;
+using PaginaVentasNet.Api.Modules.Catalog.Application.Categories.Ports;
+using PaginaVentasNet.Api.Modules.Catalog.Application.Categories.Dtos;
 
-namespace PaginaVentasNet.Api.Modules.Catalog.Application;
+namespace PaginaVentasNet.Api.Modules.Catalog.Application.Categories.UseCases;
 
 public class CreateCategoryUseCase
 {

@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PaginaVentasNet.Api.Modules.Catalog.Domain;
 
-namespace PaginaVentasNet.Api.Modules.Catalog.Infrastructure;
+namespace PaginaVentasNet.Api.Modules.Catalog.Infrastructure.Categories;
 
 public class CategoryConfiguration : IEntityTypeConfiguration<Category>
 {

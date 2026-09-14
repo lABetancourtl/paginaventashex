@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace PaginaVentasNet.Api.Modules.Catalog.Application;
+namespace PaginaVentasNet.Api.Modules.Catalog.Application.Categories.Dtos;
+
 
 public class CreateCategoryDto
 {

@@ -1,4 +1,7 @@
-namespace PaginaVentasNet.Api.Modules.Catalog.Application;
+using PaginaVentasNet.Api.Modules.Catalog.Application.Categories.Dtos;
+using PaginaVentasNet.Api.Modules.Catalog.Application.Categories.Ports;
+
+namespace PaginaVentasNet.Api.Modules.Catalog.Application.Categories.UseCases;
 
 public class GetCategoriesUseCase
 {

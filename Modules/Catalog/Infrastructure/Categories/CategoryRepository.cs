@@ -1,9 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using PaginaVentasNet.Api.Data;
-using PaginaVentasNet.Api.Modules.Catalog.Application;
+using PaginaVentasNet.Api.Modules.Catalog.Application.Categories.Dtos;
+using PaginaVentasNet.Api.Modules.Catalog.Application.Categories.Ports;
 using PaginaVentasNet.Api.Modules.Catalog.Domain;
 
-namespace PaginaVentasNet.Api.Modules.Catalog.Infrastructure;
+namespace PaginaVentasNet.Api.Modules.Catalog.Infrastructure.Categories;
 
 public class CategoryRepository : ICategoryRepository
 {
@@ -44,5 +45,11 @@ public class CategoryRepository : ICategoryRepository
             })
             .ToListAsync();
     }
+
+    public async Task<bool> ExistsByIdAsync(int id)
+{
+        return await _context.Categories
+            .AnyAsync(c => c.Id == id);
+}
 
 }

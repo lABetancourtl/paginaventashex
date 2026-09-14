@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using PaginaVentasNet.Api.Common.Responses;
 using PaginaVentasNet.Api.Controllers;
-using PaginaVentasNet.Api.Modules.Catalog.Application;
+using PaginaVentasNet.Api.Modules.Catalog.Application.Categories.Dtos;
+using PaginaVentasNet.Api.Modules.Catalog.Application.Categories.UseCases;
 
 namespace PaginaVentasNet.Api.Modules.Catalog.Presentation;
 

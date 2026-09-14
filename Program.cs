@@ -2,10 +2,14 @@ using DotNetEnv;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PaginaVentasNet.Api.Common.Middleware;
-using PaginaVentasNet.Api.Data;
-using PaginaVentasNet.Api.Modules.Catalog.Application;
-using PaginaVentasNet.Api.Modules.Catalog.Infrastructure;
 using PaginaVentasNet.Api.Common.Responses;
+using PaginaVentasNet.Api.Data;
+using PaginaVentasNet.Api.Modules.Catalog.Application.Categories.Ports;
+using PaginaVentasNet.Api.Modules.Catalog.Application.Categories.UseCases;
+using PaginaVentasNet.Api.Modules.Catalog.Application.Products.Ports;
+using PaginaVentasNet.Api.Modules.Catalog.Application.Products.UseCases;
+using PaginaVentasNet.Api.Modules.Catalog.Infrastructure.Categories;
+using PaginaVentasNet.Api.Modules.Catalog.Infrastructure.Products;
 
 Env.Load(".env");
 
@@ -48,6 +52,9 @@ builder.Services.AddProblemDetails();
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<CreateCategoryUseCase>();
 builder.Services.AddScoped<GetCategoriesUseCase>();
+
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<CreateProductUseCase>();
 
 var app = builder.Build();
 
