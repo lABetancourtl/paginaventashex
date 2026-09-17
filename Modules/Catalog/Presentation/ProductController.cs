@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PaginaVentasNet.Api.Common.Responses;
 using PaginaVentasNet.Api.Controllers;
@@ -6,6 +7,7 @@ using PaginaVentasNet.Api.Modules.Catalog.Application.Products.UseCases;
 
 namespace PaginaVentasNet.Api.Modules.Catalog.Presentation;
 
+[Authorize]
 [Route("api/products")]
 public class ProductController : ApiController
 {
