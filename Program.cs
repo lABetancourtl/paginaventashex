@@ -16,6 +16,10 @@ using PaginaVentasNet.Api.Modules.Catalog.Infrastructure.Products;
 using PaginaVentasNet.Api.Modules.Identity.Application.Auth.Ports;
 using PaginaVentasNet.Api.Modules.Identity.Application.Auth.UseCases;
 using PaginaVentasNet.Api.Modules.Identity.Infrastructure;
+using PaginaVentasNet.Api.Modules.Pokemon.Application.Ports;
+using PaginaVentasNet.Api.Modules.Pokemon.Application.UseCases;
+using PaginaVentasNet.Api.Modules.Pokemon.Infrastructure;
+using Scalar.AspNetCore;
 
 Env.Load(".env");
 
@@ -88,10 +92,46 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<RegisterUseCase>();
 builder.Services.AddScoped<LoginUseCase>();
 
+
+// Pokemon Api de prueba
+builder.Services.AddHttpClient<IPokemonProvider, PokeApiAdapter>();
+builder.Services.AddScoped<GetPokemonUseCase>();
+
+builder.Services.AddOpenApi(options =>
+{
+    options.AddDocumentTransformer((document, context, _) =>
+    {
+        document.Info.Title = "PaginaVentasNet API";
+        document.Info.Version = "v1";
+        document.Info.Description = "API de la plataforma de ventas";
+
+        document.Components ??= new();
+        document.Components.SecuritySchemes.Add("Bearer", new()
+        {
+            Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+            Scheme = "bearer",
+            BearerFormat = "JWT",
+            Description = "Ingresa el token JWT"
+        });
+
+        return Task.CompletedTask;
+    });
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
+{
     app.MapOpenApi();
+    app.MapScalarApiReference(options =>
+    {
+        options.Title = "PaginaVentasNet API";
+        options.AddHttpAuthentication("Bearer", bearer =>
+        {
+            bearer.Token = "tu-token-aqui";
+        });
+    });
+}
 
 app.UseExceptionHandler();
 app.UseAuthentication();

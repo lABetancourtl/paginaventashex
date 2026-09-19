@@ -40,7 +40,7 @@ public class ProductController : ApiController
         }
     }
 
-        [HttpGet]
+    [HttpGet]
     public async Task<ActionResult<ApiResponse<List<ProductResponseDto>>>> GetAll()
     {
         var products = await _getProductsUseCase.ExecuteAsync();
