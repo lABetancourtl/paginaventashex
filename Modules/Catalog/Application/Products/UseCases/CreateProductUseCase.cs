@@ -45,4 +45,5 @@ public class CreateProductUseCase
 
         return product.Id;
     }
+
 }

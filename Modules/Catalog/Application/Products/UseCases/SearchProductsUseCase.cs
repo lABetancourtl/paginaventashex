@@ -3,22 +3,20 @@ using PaginaVentasNet.Api.Modules.Catalog.Application.Products.Ports;
 
 namespace PaginaVentasNet.Api.Modules.Catalog.Application.Products.UseCases;
 
-public class GetProductsUseCase
+public class SearchProductsUseCase
 {
     private readonly IProductRepository _repository;
 
-    public GetProductsUseCase(IProductRepository repository)
+    public SearchProductsUseCase(IProductRepository repository)
     {
         _repository = repository;
     }
 
-    public async Task<List<ProductResponseDto>> ExecuteAsync()
+    public async Task<PagedResultDto<ProductResponseDto>> ExecuteAsync(SearchProductsDto dto)
     {
-        return await _repository.GetAllAsync();
-    }
+        if (dto.Page < 1)
+            dto.Page = 1;
 
-    public async Task<ProductResponseDto?> ExecuteAsync(int id)
-    {
-        return await _repository.GetByIdAsync(id);
+        return await _repository.SearchAsync(dto);
     }
 }

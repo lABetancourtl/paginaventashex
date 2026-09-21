@@ -47,4 +47,34 @@ public class Product
             CreatedAtUtc = DateTime.UtcNow
         };
     }
+
+    public void Update(
+        string name,
+        string description,
+        decimal price)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("El nombre del producto es obligatorio.");
+
+        if (price < 0)
+            throw new ArgumentException("El precio no puede ser negativo.");
+
+    Name = name.Trim();
+    Description = description.Trim();
+    Price = price;
+    }
+
+    public void Activate()
+    {
+        if (IsActive)
+            throw new InvalidOperationException("El producto ya está activo.");
+        IsActive = true;
+    }
+
+    public void Deactivate()
+    {
+        if (!IsActive)
+            throw new InvalidOperationException("El producto ya está inactivo.");
+        IsActive = false;
+    }
 }

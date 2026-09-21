@@ -85,6 +85,8 @@ builder.Services.AddScoped<GetCategoriesUseCase>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<CreateProductUseCase>();
 builder.Services.AddScoped<GetProductsUseCase>();
+builder.Services.AddScoped<UpdateProductUseCase>();
+builder.Services.AddScoped<SearchProductsUseCase>();
 
 // Identity
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
