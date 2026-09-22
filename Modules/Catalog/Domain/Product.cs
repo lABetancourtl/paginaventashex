@@ -48,10 +48,7 @@ public class Product
         };
     }
 
-    public void Update(
-        string name,
-        string description,
-        decimal price)
+    public void Update(string name,string description,decimal price)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("El nombre del producto es obligatorio.");

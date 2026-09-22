@@ -52,4 +52,32 @@ public class CategoryRepository : ICategoryRepository
             .AnyAsync(c => c.Id == id);
 }
 
+    public async Task<CategoryResponseDto?> GetByIdAsync(int id)
+    {
+        return await _context.Categories
+            .Where(c => c.Id == id)
+            .Select(c => new CategoryResponseDto
+            {
+                Id = c.Id,
+                Name = c.Name,
+                Slug = c.Slug,
+                ParentCategoryId = c.ParentCategoryId,
+                IsActive = c.IsActive,
+                CreatedAtUtc = c.CreatedAtUtc
+            })
+            .FirstOrDefaultAsync()!;
+    }
+
+    public async Task<Category?> GetEntityByIdAsync(int id)
+    {
+        return await _context.Categories.FindAsync(id);
+    }
+
+    public  Task UpdateAsync(Category category)
+    {
+        _context.Categories.Update(category);
+        return Task.CompletedTask;
+    }
+
+
 }

@@ -28,4 +28,16 @@ public class Category
             CreatedAtUtc = DateTime.UtcNow
         };
     }
+
+    public void Update(string name, string slug)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("El nombre de la categoría es obligatorio.");
+
+        if (string.IsNullOrWhiteSpace(slug))
+            throw new ArgumentException("El slug de la categoría es obligatorio.");
+
+        Name = name.Trim();
+        Slug = slug.Trim().ToLower();
+    }
 }

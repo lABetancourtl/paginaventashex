@@ -9,6 +9,8 @@ public interface ICategoryRepository
     Task<bool> ExistsByIdAsync(int categoryId);
     Task<bool> ExistsBySlugAsync(string slug);
     Task<List<CategoryResponseDto>> GetAllAsync();
+    Task<CategoryResponseDto?> GetByIdAsync(int id);
+    Task<Category?> GetEntityByIdAsync(int id);
     Task SaveChangesAsync();
-
+    Task UpdateAsync(Category category);
 }

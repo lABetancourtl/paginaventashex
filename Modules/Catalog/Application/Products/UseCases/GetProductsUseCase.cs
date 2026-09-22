@@ -17,6 +17,11 @@ public class GetProductsUseCase
         return await _repository.GetAllAsync();
     }
 
+    public async Task<List<ProductResponseDto>> ExecuteDeactiveAsync()
+    {
+        return await _repository.GetDeactiveAsync();
+    }
+
     public async Task<ProductResponseDto?> ExecuteAsync(int id)
     {
         return await _repository.GetByIdAsync(id);

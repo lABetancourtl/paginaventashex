@@ -35,6 +35,30 @@ public class ProductRepository : IProductRepository
     {
         return await _context.Products
             .Include(p => p.Category)
+            .Where(p => p.IsActive)
+            .OrderBy(p => p.Name)   
+            .Select(p => new ProductResponseDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Description = p.Description,
+                Price = p.Price,
+                Sku = p.Sku,
+                Stock = p.Stock,
+                IsActive = p.IsActive,
+                CategoryId = p.CategoryId,
+                CategoryName = p.Category!.Name,
+                CreatedAtUtc = p.CreatedAtUtc
+            })
+            .ToListAsync();
+    }
+
+    public async Task<List<ProductResponseDto>> GetDeactiveAsync()
+    {
+        return await _context.Products
+            .Include(p => p.Category)
+            .Where(p => p.IsActive == false)
+            .OrderBy(p => p.Name)   
             .Select(p => new ProductResponseDto
             {
                 Id = p.Id,
@@ -103,6 +127,7 @@ public class ProductRepository : IProductRepository
         var totalItems = await query.CountAsync();
 
         var items = await query
+            .OrderBy(p => p.Name)
             .Skip((dto.Page - 1) * pageSize)
             .Take(pageSize)
             .Select(p => new ProductResponseDto
@@ -127,4 +152,6 @@ public class ProductRepository : IProductRepository
             Page = dto.Page
         };
     }
+
+
 }
