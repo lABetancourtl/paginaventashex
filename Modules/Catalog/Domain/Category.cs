@@ -40,4 +40,18 @@ public class Category
         Name = name.Trim();
         Slug = slug.Trim().ToLower();
     }
+
+    public void Activate()
+    {
+        if (IsActive)
+            throw new InvalidOperationException("La categoría ya está activa.");
+        IsActive = true;
+    }
+
+    public void Deactivate()
+    {
+        if (!IsActive)
+            throw new InvalidOperationException("La categoría ya está desactivada.");
+        IsActive = false;
+    }
 }

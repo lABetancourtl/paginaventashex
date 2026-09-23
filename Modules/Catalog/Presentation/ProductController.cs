@@ -33,8 +33,6 @@ public class ProductController : ApiController
     }
 
     /// <summary>
-    /// Crea un nuevo producto en el catálogo.
-    /// </summary>
     /// <param name="dto">Datos del producto: nombre, descripción, precio, SKU, stock y categoría.</param>
     /// <returns>Id del producto creado.</returns>
     [HttpPost]
@@ -86,7 +84,7 @@ public class ProductController : ApiController
     [HttpGet("{id}")]
     public async Task<ActionResult<ApiResponse<ProductResponseDto>>> GetById(int id)
     {
-        var product = await _getProductsUseCase.ExecuteAsync(id);
+        var product = await _getProductsUseCase.ExecuteByIdAsync(id);
 
         if (product == null)
             return Failure<ProductResponseDto>("PRODUCT_NOT_FOUND",

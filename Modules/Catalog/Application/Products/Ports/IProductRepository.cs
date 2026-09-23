@@ -3,6 +3,9 @@ using PaginaVentasNet.Api.Modules.Catalog.Domain;
 
 namespace PaginaVentasNet.Api.Modules.Catalog.Application.Products.Ports;
 
+/// <summary> 
+/// Interfaz que define las operaciones de acceso a datos para la entidad Product.
+/// </summary>
 public interface IProductRepository
 {
     Task AddAsync(Product product);

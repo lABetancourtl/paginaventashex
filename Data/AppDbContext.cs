@@ -7,6 +7,9 @@ using PaginaVentasNet.Api.Modules.Identity.Infrastructure;
 
 namespace PaginaVentasNet.Api.Data;
 
+/// <summary>
+/// Contexto de base de datos para la aplicación.
+/// </summary>
 public class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)

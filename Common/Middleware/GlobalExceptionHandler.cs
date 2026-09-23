@@ -3,6 +3,9 @@ using PaginaVentasNet.Api.Common.Responses;
 
 namespace PaginaVentasNet.Api.Common.Middleware;
 
+/// <summary>
+/// Middleware para manejar excepciones globales.
+/// </summary>
 public class GlobalExceptionHandler : IExceptionHandler
 {
     private readonly ILogger<GlobalExceptionHandler> _logger;
@@ -12,6 +15,13 @@ public class GlobalExceptionHandler : IExceptionHandler
         _logger = logger;
     }
 
+    /// <summary>
+    /// Maneja las excepciones no controladas y devuelve una respuesta de error genérica.
+    /// </summary>
+    /// <param name="httpContext">Contexto HTTP actual.</param>
+    /// <param name="exception">Excepción no controlada.</param>
+    /// <param name="cancellationToken">Token de cancelación.</param>
+    /// <returns>True si la excepción fue manejada, false en caso contrario.</returns
     public async ValueTask<bool> TryHandleAsync(
         HttpContext httpContext,
         Exception exception,

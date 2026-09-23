@@ -5,6 +5,9 @@ using PaginaVentasNet.Api.Modules.Catalog.Application.Categories.Ports;
 
 namespace PaginaVentasNet.Api.Modules.Catalog.Application.Products.UseCases;
 
+/// <summary> 
+/// Caso de uso para crear un nuevo producto.
+/// </summary> 
 public class CreateProductUseCase
 {
     private readonly IProductRepository _productRepository;
@@ -18,6 +21,11 @@ public class CreateProductUseCase
         _categoryRepository = categoryRepository;
     }
 
+    /// <summary>
+    /// Ejecuta el caso de uso para crear un nuevo producto.
+    /// </summary>
+    /// <param name="dto">Datos del producto a crear son: name, description, price, sku, stock y category id.</param>
+    /// <returns>Id del producto creado.</returns>
     public async Task<int> ExecuteAsync(CreateProductDto dto)
     {
         var categoryExists = await _categoryRepository.ExistsByIdAsync(dto.CategoryId);

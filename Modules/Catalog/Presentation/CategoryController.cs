@@ -7,6 +7,9 @@ using PaginaVentasNet.Api.Modules.Catalog.Application.Categories.UseCases;
 
 namespace PaginaVentasNet.Api.Modules.Catalog.Presentation;
 
+/// <summary>
+/// Controlador para la gestión de categorías.
+/// </summary>
 [Authorize]
 [Route("api/categories")]
 public class CategoryController : ApiController
@@ -25,6 +28,11 @@ public class CategoryController : ApiController
         _updateCategoryUseCase = updateCategoryUseCase;
     }
 
+    /// <summary> 
+    /// Crea una nueva categoría.
+    /// </summary>
+    /// <param name="dto">Datos de la categoría a crear.</param>
+    /// <returns>El Id de la categoría creada o un error si ya existe.</returns>
     [HttpPost]
     public async Task<ActionResult<ApiResponse<int>>> Create(CreateCategoryDto dto)
     {
@@ -43,6 +51,10 @@ public class CategoryController : ApiController
         }
     }
 
+    /// <summary>
+    /// Obtiene todas las categorías.
+    /// </summary>
+    /// <returns>Lista de categorías.</returns>
     [HttpGet]
     public async Task<ActionResult<ApiResponse<List<CategoryResponseDto>>>> GetAll()
     {
@@ -74,7 +86,7 @@ public class CategoryController : ApiController
     /// <param name="id">Id de la categoría a actualizar.</param>
     /// <param name="dto">Datos de la categoría a actualizar.</param>
     /// <returns>El Id de la categoría actualizada o un error si no se encuentra.</returns>
-    [HttpPut("id")]
+    [HttpPut("{id}")]
     public async Task<ActionResult<ApiResponse<int>>> Update(int id, UpdateCategoryDto dto)
     {
         try
@@ -92,4 +104,55 @@ public class CategoryController : ApiController
             return Failure<int>("CATEGORY_VALIDATION", ex.Message, 400);
         }
     }
+
+    /// <summary>
+    /// Activa una categoría existente por su Id.
+    /// </summary> 
+    /// <param name="id">Id de la categoría a activar.</param>
+    /// <returns>True si se activó correctamente, false si no se encontró la categoría con el Id proporcionado.</returns>
+    [HttpPatch("{id}/activate")]
+    public async Task<ActionResult<ApiResponse<bool>>> Activate(int id)
+    {
+        try
+        {
+            var activatedId = await _updateCategoryUseCase.ActivateAsync(id);
+            
+            if (!activatedId)
+                return Failure<bool>("CATEGORY_NOT_FOUND",
+                    $"No se encontró la categoría con Id {id}.", 404);
+            
+            return Success(true);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Failure<bool>("CATEGORY_INVALID_STATE", ex.Message, 400);
+        }
+    }
+  
+    /// <summary>
+    /// Desactiva una categoría existente por su Id.
+    /// </summary>
+    /// <param name="id">Id de la categoría a desactivar.</param>
+    /// <returns>True si se desactivó correctamente, false si no se encontró la categoría con el Id proporcionado.</returns>
+    [HttpPatch("{id}/deactivate")]
+    public async Task<ActionResult<ApiResponse<bool>>> Deactivate(int id)
+    {
+        try
+        {
+            var deactivatedId = await _updateCategoryUseCase.DeactivateAsync(id);   
+
+            if (!deactivatedId)
+                return Failure<bool>("CATEGORY_NOT_FOUND",
+                    $"No se encontró la categoría con Id {id}.", 404);
+            
+            return Success(true);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Failure<bool>("CATEGORY_INVALID_STATE", ex.Message, 400);
+        }
+    }
+
+
+    
 }

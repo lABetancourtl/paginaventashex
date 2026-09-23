@@ -4,6 +4,9 @@ using PaginaVentasNet.Api.Modules.Catalog.Application.Categories.Dtos;
 
 namespace PaginaVentasNet.Api.Modules.Catalog.Application.Categories.UseCases;
 
+/// <summary> 
+/// Caso de uso para crear una nueva categoría.
+/// </summary>
 public class CreateCategoryUseCase
 {
     private readonly ICategoryRepository _repository;
@@ -13,6 +16,11 @@ public class CreateCategoryUseCase
         _repository = repository;
     }
 
+    /// <summary>
+    /// Ejecuta el caso de uso para crear una nueva categoría.
+    /// </summary>
+    /// <param name="dto">Datos de la categoría a crear: name, slug y parent category id.</param>
+    /// <returns>Id de la categoría creada.</returns>
     public async Task<int> ExecuteAsync(CreateCategoryDto dto)
     {
         var slugExiste = await _repository.ExistsBySlugAsync(dto.Slug);
