@@ -9,6 +9,10 @@ public class Category
     public bool IsActive { get; private set; }
     public DateTime CreatedAtUtc { get; private set; }
 
+    public Category? ParentCategory { get; private set; }
+
+    public ICollection<Category> ChildCategories { get; private set; } = new List<Category>();
+
     private Category() { }
 
     public static Category Create(string name, string slug, int? parentCategoryId = null)

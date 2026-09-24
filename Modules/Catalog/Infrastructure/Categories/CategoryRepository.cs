@@ -119,5 +119,41 @@ public class CategoryRepository : ICategoryRepository
         return Task.CompletedTask;
     }
 
+    /// <summary>
+    /// Obtiene todas las categorías activas organizadas en estructura jerárquica.
+    /// Carga todas las categorías en memoria y construye el árbol recursivamente.
+    /// </summary>
+    public async Task<List<CategoryTreeDto>> GetTreeAsync()
+    {
+        var todasLasCategorias = await _context.Categories
+        .Where(c => c.IsActive)
+        .OrderBy(c => c.Name)
+        .ToListAsync();
+
+        return todasLasCategorias
+        .Where(c => c.ParentCategoryId == null)
+        .Select(c => MapToTree(c, todasLasCategorias))
+        .ToList();
+    }
+
+    /// <summary>
+    /// Mapea una categoría y sus hijos recursivamente a CategoryTreeDto.
+    /// </summary>
+    private static CategoryTreeDto MapToTree(Category category, List<Category> todas)
+    {
+        return new CategoryTreeDto
+        {
+            Id = category.Id,
+            Name = category.Name,
+            Slug = category.Slug,
+            ParentCategoryId = category.ParentCategoryId,
+            IsActive = category.IsActive,
+            Children = todas
+                .Where(c => c.ParentCategoryId == category.Id)
+                .OrderBy(c => c.Name)
+                .Select(c => MapToTree(c, todas))
+                .ToList()
+        };
+}
 
 }

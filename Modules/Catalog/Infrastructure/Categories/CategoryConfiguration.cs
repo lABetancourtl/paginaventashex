@@ -24,8 +24,8 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
         builder.Property(c => c.IsActive)
             .HasDefaultValue(true);
 
-        builder.HasOne<Category>()
-            .WithMany()
+        builder.HasOne(c => c.ParentCategory)
+            .WithMany(c => c.ChildCategories)
             .HasForeignKey(c => c.ParentCategoryId)
             .IsRequired(false)
             .OnDelete(DeleteBehavior.Restrict);

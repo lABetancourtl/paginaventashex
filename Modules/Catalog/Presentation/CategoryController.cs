@@ -17,15 +17,18 @@ public class CategoryController : ApiController
     private readonly CreateCategoryUseCase _createCategoryUseCase;
     private readonly GetCategoriesUseCase _getCategoriesUseCase;
     private readonly UpdateCategoryUseCase _updateCategoryUseCase;
+    private readonly GetCategoryTreeUseCase _getCategoryTreeUseCase;
 
     public CategoryController(
         CreateCategoryUseCase createCategoryUseCase,
         GetCategoriesUseCase getCategoriesUseCase,
-        UpdateCategoryUseCase updateCategoryUseCase)
+        UpdateCategoryUseCase updateCategoryUseCase,
+        GetCategoryTreeUseCase getCategoryTreeUseCase)
     {
         _createCategoryUseCase = createCategoryUseCase;
         _getCategoriesUseCase = getCategoriesUseCase;
         _updateCategoryUseCase = updateCategoryUseCase;
+        _getCategoryTreeUseCase = getCategoryTreeUseCase;
     }
 
     /// <summary> 
@@ -151,6 +154,13 @@ public class CategoryController : ApiController
         {
             return Failure<bool>("CATEGORY_INVALID_STATE", ex.Message, 400);
         }
+    }
+
+    [HttpGet("tree")]
+    public async Task<ActionResult<ApiResponse<List<CategoryTreeDto>>>> GetTree()
+    {
+        var tree = await _getCategoryTreeUseCase.ExecuteAsync();
+        return Success(tree);
     }
 
 
