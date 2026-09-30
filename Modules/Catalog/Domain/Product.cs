@@ -1,3 +1,5 @@
+using PaginaVentasNet.Api.Modules.Catalog.Domain.Enums;
+
 namespace PaginaVentasNet.Api.Modules.Catalog.Domain;
 
 public class Product
@@ -12,6 +14,7 @@ public class Product
     public int CategoryId { get; private set; }
     public Category? Category { get; private set; }
     public DateTime CreatedAtUtc { get; private set; }
+    public ICollection<ProductMedia> Media { get; private set; } = new List<ProductMedia>();
 
     private Product() { }
 

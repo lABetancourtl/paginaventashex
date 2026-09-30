@@ -156,6 +156,10 @@ public class CategoryController : ApiController
         }
     }
 
+    /// <summary>
+    /// Obtiene el árbol de categorías.
+    /// </summary>
+    /// <returns>El árbol de categorías.</returns>
     [HttpGet("tree")]
     public async Task<ActionResult<ApiResponse<List<CategoryTreeDto>>>> GetTree()
     {

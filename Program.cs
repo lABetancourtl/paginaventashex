@@ -19,7 +19,11 @@ using PaginaVentasNet.Api.Modules.Identity.Infrastructure;
 using PaginaVentasNet.Api.Modules.Pokemon.Application.Ports;
 using PaginaVentasNet.Api.Modules.Pokemon.Application.UseCases;
 using PaginaVentasNet.Api.Modules.Pokemon.Infrastructure;
+using PaginaVentasNet.Api.Modules.Catalog.Infrastructure.Media;
+
 using Scalar.AspNetCore;
+using PaginaVentasNet.Api.Modules.Catalog.Application.Media.Ports;
+using PaginaVentasNet.Api.Modules.Catalog.Application.Media.UseCases;
 
 Env.Load(".env");
 
@@ -32,6 +36,11 @@ var connectionString = $"Host={Environment.GetEnvironmentVariable("DB_HOST")};" 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(
+            new System.Text.Json.Serialization.JsonStringEnumConverter());
+    })
     .ConfigureApiBehaviorOptions(options =>
     {
         options.InvalidModelStateResponseFactory = context =>
@@ -96,6 +105,11 @@ builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<RegisterUseCase>();
 builder.Services.AddScoped<LoginUseCase>();
+
+// Media
+builder.Services.AddScoped<IProductMediaRepository, ProductMediaRepository>();
+builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
+builder.Services.AddScoped<UploadProductMediaUseCase>();
 
 
 // Pokemon Api de prueba
