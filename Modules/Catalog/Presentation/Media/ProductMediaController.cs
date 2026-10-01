@@ -16,10 +16,17 @@ namespace PaginaVentasNet.Api.Modules.Catalog.Presentation.Media;
 public class ProductMediaController : ApiController
 {
     private readonly UploadProductMediaUseCase _uploadMediaUseCase;
+    private readonly GetProductMediaUseCase _getProductMediaUseCase;
+    private readonly DeleteProductMediaUseCase _deleteProductMediaUseCase;
 
-    public ProductMediaController(UploadProductMediaUseCase uploadMediaUseCase)
+    public ProductMediaController(
+        UploadProductMediaUseCase uploadMediaUseCase,
+        GetProductMediaUseCase getProductMediaUseCase,
+        DeleteProductMediaUseCase deleteProductMediaUseCase)
     {
         _uploadMediaUseCase = uploadMediaUseCase;
+        _getProductMediaUseCase = getProductMediaUseCase;
+        _deleteProductMediaUseCase = deleteProductMediaUseCase;
     }
 
     /// <summary>
@@ -67,6 +74,41 @@ public class ProductMediaController : ApiController
         catch (InvalidOperationException ex)
         {
             return Failure<ProductMediaResponseDto>("MEDIA_CONFLICT", ex.Message, 409);
+        }
+    }
+
+    /// <summary>
+    /// Obtiene todos los archivos multimedia de un producto.
+    /// </summary>
+    /// <param name="productId">Id del producto.</param>
+    [HttpGet]
+    public async Task<ActionResult<ApiResponse<List<ProductMediaResponseDto>>>> GetAll(
+        int productId)
+    {
+        try
+        {
+            var media = await _getProductMediaUseCase.ExecuteAsync(productId);
+            return Success(media);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Failure<List<ProductMediaResponseDto>>("PRODUCT_NOT_FOUND", ex.Message, 404);
+        }
+    }
+
+    [HttpDelete("{mediaId}")]
+    public async Task<ActionResult<ApiResponse<bool>>> Delete(
+        int productId,
+        int mediaId)
+    {
+        try
+        {
+            var result = await _deleteProductMediaUseCase.DeleteAsync(productId, mediaId);
+            return Success(result);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Failure<bool>("MEDIA_NOT_FOUND", ex.Message, 404);
         }
     }
 }

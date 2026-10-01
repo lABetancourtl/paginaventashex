@@ -4,9 +4,12 @@ using PaginaVentasNet.Api.Modules.Catalog.Domain;
 
 namespace PaginaVentasNet.Api.Modules.Catalog.Infrastructure.Products;
 
-public class ProductMediaConfiguration : IEntityTypeConfiguration<ProductMedia>
+/// <summary>
+/// Configuración de la entidad Media.
+/// </summary>
+public class ProductMediaConfiguration : IEntityTypeConfiguration<Domain.ProductMedia>
 {
-    public void Configure(EntityTypeBuilder<ProductMedia> builder)
+    public void Configure(EntityTypeBuilder<Domain.ProductMedia> builder)
     {
         builder.HasKey(m => m.Id);
 

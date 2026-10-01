@@ -43,4 +43,9 @@ public class ProductMedia
             CreatedAtUtc = DateTime.UtcNow
         };
     }
+
+    public void SetAsMain()
+    {
+        IsMain = true;
+    }
 }

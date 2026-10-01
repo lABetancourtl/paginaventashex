@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PaginaVentasNet.Api.Data;
+using PaginaVentasNet.Api.Modules.Catalog.Application.Media.Dtos;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Media.Ports;
 using PaginaVentasNet.Api.Modules.Catalog.Domain;
 using PaginaVentasNet.Api.Modules.Catalog.Domain.Enums;
@@ -23,7 +24,7 @@ public class ProductMediaRepository : IProductMediaRepository
         await _context.ProductMedia.AddAsync(media);
     }
 
-    public async Task<List<ProductMedia>> GetByProductIdAsync(int productId)
+    public async Task<List<Domain.ProductMedia>> GetByProductIdAsync(int productId)
     {
         return await _context.ProductMedia
             .Where(m => m.ProductId == productId)
@@ -57,5 +58,31 @@ public class ProductMediaRepository : IProductMediaRepository
     public async Task SaveChangesAsync()
     {
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<List<ProductMediaResponseDto>> GetAllByProductIdAsync(int productId)
+    {
+        return await _context.ProductMedia
+            .Where(m => m.ProductId == productId)
+            .OrderBy(m => m.DisplayOrder)
+            .Select(m => new ProductMediaResponseDto
+            {
+                Id = m.Id,
+                Url = m.Url,
+                MediaType = m.MediaType,
+                DisplayOrder = m.DisplayOrder,
+                IsMain = m.IsMain
+            })
+            .ToListAsync();
+    }
+
+    public async Task<ProductMedia?> GetNextImageAsync(int productId, int excludeMediaId)
+    {
+        return await _context.ProductMedia
+            .Where(m => m.ProductId == productId 
+                    && m.Id != excludeMediaId 
+                    && m.MediaType == MediaType.Image)
+            .OrderBy(m => m.DisplayOrder)
+            .FirstOrDefaultAsync();
     }
 }

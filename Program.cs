@@ -20,10 +20,10 @@ using PaginaVentasNet.Api.Modules.Pokemon.Application.Ports;
 using PaginaVentasNet.Api.Modules.Pokemon.Application.UseCases;
 using PaginaVentasNet.Api.Modules.Pokemon.Infrastructure;
 using PaginaVentasNet.Api.Modules.Catalog.Infrastructure.Media;
-
-using Scalar.AspNetCore;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Media.Ports;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Media.UseCases;
+
+using Scalar.AspNetCore;
 
 Env.Load(".env");
 
@@ -110,6 +110,9 @@ builder.Services.AddScoped<LoginUseCase>();
 builder.Services.AddScoped<IProductMediaRepository, ProductMediaRepository>();
 builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 builder.Services.AddScoped<UploadProductMediaUseCase>();
+builder.Services.AddScoped<GetProductMediaUseCase>();
+builder.Services.AddScoped<DeleteProductMediaUseCase>();
+
 
 
 // Pokemon Api de prueba
