@@ -39,13 +39,12 @@ public class ProductMediaController : ApiController
     [Consumes("multipart/form-data")]
     public async Task<ActionResult<ApiResponse<ProductMediaResponseDto>>> UploadImage(
         int productId,
-        IFormFile file,
-        [FromForm] bool isMain = false)
+        IFormFile file)
     {
         try
         {
             var result = await _uploadMediaUseCase.ExecuteAsync(
-                productId, file, MediaType.Image, isMain);
+                productId, file, MediaType.Image);
             return Success(result, 201);
         }
         catch (InvalidOperationException ex)

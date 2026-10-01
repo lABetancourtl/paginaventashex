@@ -9,7 +9,7 @@ namespace PaginaVentasNet.Api.Modules.Catalog.Application.Media.Ports;
 public interface IProductMediaRepository
 {
     Task AddAsync(Domain.ProductMedia media);
-    Task<List<Domain.ProductMedia>> GetByProductIdAsync(int productId);
+    Task<List<ProductMedia>> GetByProductIdAsync(int productId);
     Task<List<ProductMediaResponseDto>> GetAllByProductIdAsync(int productId);
     Task<ProductMedia?> GetByIdAsync(int id);
     Task RemoveAsync(ProductMedia media);

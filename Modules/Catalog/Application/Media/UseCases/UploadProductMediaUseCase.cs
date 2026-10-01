@@ -31,8 +31,7 @@ public class UploadProductMediaUseCase
     public async Task<ProductMediaResponseDto> ExecuteAsync(
         int productId,
         IFormFile file,
-        MediaType mediaType,
-        bool isMain = false)
+        MediaType mediaType) 
     {
         var product = await _productRepository.GetEntityByIdAsync(productId);
 
@@ -60,6 +59,9 @@ public class UploadProductMediaUseCase
 
         var existingMedia = await _mediaRepository.GetByProductIdAsync(productId);
         var displayOrder = existingMedia.Count + 1;
+
+        var isMain = mediaType == MediaType.Image && 
+                    !existingMedia.Any(m => m.MediaType == MediaType.Image);
 
         var media = ProductMedia.Create(
             productId, url, publicId, mediaType, displayOrder, isMain);

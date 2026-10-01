@@ -24,7 +24,7 @@ public class ProductMediaRepository : IProductMediaRepository
         await _context.ProductMedia.AddAsync(media);
     }
 
-    public async Task<List<Domain.ProductMedia>> GetByProductIdAsync(int productId)
+    public async Task<List<ProductMedia>> GetByProductIdAsync(int productId)
     {
         return await _context.ProductMedia
             .Where(m => m.ProductId == productId)
