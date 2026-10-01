@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PaginaVentasNet.Api.Data;
+using PaginaVentasNet.Api.Modules.Catalog.Application.Media.Dtos;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Products.Dtos;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Products.Ports;
 using PaginaVentasNet.Api.Modules.Catalog.Domain;
@@ -54,6 +55,7 @@ public class ProductRepository : IProductRepository
     {
         return await _context.Products
             .Include(p => p.Category)
+            .Include(p => p.Media)
             .Where(p => p.IsActive)
             .OrderBy(p => p.Name)   
             .Select(p => new ProductResponseDto
@@ -67,6 +69,11 @@ public class ProductRepository : IProductRepository
                 IsActive = p.IsActive,
                 CategoryId = p.CategoryId,
                 CategoryName = p.Category!.Name,
+                MainImageUrl = p.Media
+                    .Where(m => m.IsMain)
+                    .Select(m => m.Url)
+                    .FirstOrDefault(),
+                Media = new List<ProductMediaResponseDto>(),
                 CreatedAtUtc = p.CreatedAtUtc
             })
             .ToListAsync();
@@ -107,6 +114,7 @@ public class ProductRepository : IProductRepository
     {
         return await _context.Products
             .Include(p => p.Category)
+            .Include(p => p.Media.OrderBy(m => m.DisplayOrder))
             .Where(p => p.Id == id)
             .Select(p => new ProductResponseDto
             {
@@ -119,6 +127,21 @@ public class ProductRepository : IProductRepository
                 IsActive = p.IsActive,
                 CategoryId = p.CategoryId,
                 CategoryName = p.Category!.Name,
+                MainImageUrl = p.Media
+                    .Where(m => m.IsMain)
+                    .Select(m => m.Url)
+                    .FirstOrDefault(),
+                Media = p.Media
+                    .OrderBy(m => m.DisplayOrder)
+                    .Select(m => new ProductMediaResponseDto
+                    {
+                        Id = m.Id,
+                        Url = m.Url,
+                        MediaType = m.MediaType,
+                        DisplayOrder = m.DisplayOrder,
+                        IsMain = m.IsMain
+                    })
+                    .ToList(),
                 CreatedAtUtc = p.CreatedAtUtc
             })
             .FirstOrDefaultAsync();
@@ -184,6 +207,11 @@ public class ProductRepository : IProductRepository
                 IsActive = p.IsActive,
                 CategoryId = p.CategoryId,
                 CategoryName = p.Category!.Name,
+                MainImageUrl = p.Media
+                    .Where(m => m.IsMain)
+                    .Select(m => m.Url)
+                    .FirstOrDefault(),
+                Media = new List<ProductMediaResponseDto>(),
                 CreatedAtUtc = p.CreatedAtUtc
             })
             .ToListAsync();

@@ -1,3 +1,5 @@
+using PaginaVentasNet.Api.Modules.Catalog.Application.Media.Dtos;
+
 namespace PaginaVentasNet.Api.Modules.Catalog.Application.Products.Dtos;
 
 public class ProductResponseDto
@@ -11,5 +13,7 @@ public class ProductResponseDto
     public bool IsActive { get; set; }
     public int CategoryId { get; set; }
     public string CategoryName { get; set; } = string.Empty;
+    public string? MainImageUrl { get; set; }              
+    public List<ProductMediaResponseDto> Media { get; set; } = new();
     public DateTime CreatedAtUtc { get; set; }
 }
