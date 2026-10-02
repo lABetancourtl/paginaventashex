@@ -24,6 +24,10 @@ using PaginaVentasNet.Api.Modules.Catalog.Application.Media.Ports;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Media.UseCases;
 
 using Scalar.AspNetCore;
+using PaginaVentasNet.Api.Modules.Identity.Application.Otp.Ports;
+using PaginaVentasNet.Api.Modules.Identity.Infrastructure.Otp;
+using PaginaVentasNet.Api.Modules.Identity.Application.Otp.UseCases;
+using Resend;
 
 Env.Load(".env");
 
@@ -112,6 +116,17 @@ builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 builder.Services.AddScoped<UploadProductMediaUseCase>();
 builder.Services.AddScoped<GetProductMediaUseCase>();
 builder.Services.AddScoped<DeleteProductMediaUseCase>();
+
+
+// Otp
+builder.Services.AddResend(options =>
+{
+    options.ApiToken = Environment.GetEnvironmentVariable("RESEND_API_KEY")!;
+});
+builder.Services.AddScoped<IOtpRepository, OtpRepository>();
+builder.Services.AddScoped<IEmailService, ResendEmailService>();
+builder.Services.AddScoped<SendOtpUseCase>();
+builder.Services.AddScoped<VerifyOtpUseCase>();
 
 
 

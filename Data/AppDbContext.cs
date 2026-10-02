@@ -4,6 +4,7 @@ using PaginaVentasNet.Api.Modules.Catalog.Infrastructure.Categories;
 using PaginaVentasNet.Api.Modules.Catalog.Infrastructure.Products;
 using PaginaVentasNet.Api.Modules.Identity.Domain;
 using PaginaVentasNet.Api.Modules.Identity.Infrastructure;
+using PaginaVentasNet.Api.Modules.Identity.Infrastructure.Otp;
 
 namespace PaginaVentasNet.Api.Data;
 
@@ -20,12 +21,14 @@ public class AppDbContext : DbContext
     public DbSet<Product> Products { get; set; }
     public DbSet<Usuario> Usuarios { get; set; }
     public DbSet<ProductMedia> ProductMedia { get; set; }
+    public DbSet<OtpCode> OtpCodes { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfiguration(new CategoryConfiguration());
         modelBuilder.ApplyConfiguration(new ProductConfiguration());
-        modelBuilder.ApplyConfiguration(new UsuarioConfiguration());
         modelBuilder.ApplyConfiguration(new ProductMediaConfiguration());
+        modelBuilder.ApplyConfiguration(new UsuarioConfiguration());
+        modelBuilder.ApplyConfiguration(new OtpConfiguration());
     }
 }
