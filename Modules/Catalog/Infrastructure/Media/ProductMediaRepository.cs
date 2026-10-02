@@ -24,6 +24,11 @@ public class ProductMediaRepository : IProductMediaRepository
         await _context.ProductMedia.AddAsync(media);
     }
 
+    /// <summary>
+    /// Obtiene todos los archivos multimedia asociados a un producto dado su ID. 
+    /// </summary>
+    /// <param name="productId"></param>
+    /// <returns></returns>
     public async Task<List<ProductMedia>> GetByProductIdAsync(int productId)
     {
         return await _context.ProductMedia
@@ -32,6 +37,11 @@ public class ProductMediaRepository : IProductMediaRepository
             .ToListAsync();
     }
 
+    /// <summary>
+    /// Obtiene un archivo multimedia por su ID.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
     public async Task<ProductMedia?> GetByIdAsync(int id)
     {
         return await _context.ProductMedia.FindAsync(id);
@@ -85,4 +95,12 @@ public class ProductMediaRepository : IProductMediaRepository
             .OrderBy(m => m.DisplayOrder)
             .FirstOrDefaultAsync();
     }
+
+    public async Task<ProductMedia?> GetIsMainAsync(int productId)
+    {
+        return await _context.ProductMedia
+            .Where(m => m.ProductId == productId && m.IsMain)
+            .FirstOrDefaultAsync();
+    }
+
 }

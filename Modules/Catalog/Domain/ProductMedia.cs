@@ -48,4 +48,9 @@ public class ProductMedia
     {
         IsMain = true;
     }
+
+    public void RemoveFromMain()
+    {
+        IsMain = false;
+    }
 }

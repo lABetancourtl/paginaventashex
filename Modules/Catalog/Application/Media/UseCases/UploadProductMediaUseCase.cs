@@ -78,4 +78,40 @@ public class UploadProductMediaUseCase
             IsMain = media.IsMain
         };
     }
+
+    public async Task<bool> SetAsMainAsync(int productId, int mediaId)
+    {
+        var product = await _productRepository.GetEntityByIdAsync(productId);
+
+        if (product is null)
+            throw new InvalidOperationException(
+                $"No existe un producto con Id '{productId}'.");
+
+        var media = await _mediaRepository.GetByIdAsync(mediaId);
+
+        if (media is null || media.ProductId != productId)
+            throw new InvalidOperationException(
+                $"No existe un archivo multimedia con Id '{mediaId}' para el producto con Id '{productId}'.");
+
+        if (media.MediaType != MediaType.Image)
+            throw new ArgumentException(
+                "Solo se pueden establecer como principal archivos de tipo imagen.");
+
+        if (media.IsMain)
+            throw new ArgumentException(
+                "El archivo multimedia ya es la imagen principal.");
+
+        var currentMain = await _mediaRepository.GetIsMainAsync(productId);
+
+        if (currentMain is not null)
+        {
+            currentMain.RemoveFromMain();
+        }
+        media.SetAsMain(); 
+
+
+        await _mediaRepository.SaveChangesAsync();
+        return true;
+  
+    }
 }

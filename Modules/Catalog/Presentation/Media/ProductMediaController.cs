@@ -94,7 +94,12 @@ public class ProductMediaController : ApiController
             return Failure<List<ProductMediaResponseDto>>("PRODUCT_NOT_FOUND", ex.Message, 404);
         }
     }
-
+    /// <summary>
+    /// Elimina un archivo multimedia de un producto.      
+    /// </summary>
+    /// <param name="productId"> es el ID del producto.</param>
+    /// <param name="mediaId"> es el ID del archivo multimedia.</param>
+    /// <returns></returns>
     [HttpDelete("{mediaId}")]
     public async Task<ActionResult<ApiResponse<bool>>> Delete(
         int productId,
@@ -110,4 +115,31 @@ public class ProductMediaController : ApiController
             return Failure<bool>("MEDIA_NOT_FOUND", ex.Message, 404);
         }
     }
+
+    /// <summary>
+    /// Establece un archivo multimedia como principal.
+    /// </summary>
+    /// <param name="productId">Id del producto.</param>
+    /// <param name="mediaId">Id del archivo multimedia.</param>
+    /// <returns></returns>
+    [HttpPatch("{mediaId}/main")]
+    public async Task<ActionResult<ApiResponse<bool>>> SetAsMain(
+        int productId,
+        int mediaId)
+    {
+        try
+        {
+            var result = await _uploadMediaUseCase.SetAsMainAsync(productId, mediaId);
+            return Success(result);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Failure<bool>("MEDIA_NOT_FOUND", ex.Message, 404);
+        }
+        catch (ArgumentException ex)
+        {
+            return Failure<bool>("MEDIA_INVALID", ex.Message, 400);
+        }
+    }
+
 }

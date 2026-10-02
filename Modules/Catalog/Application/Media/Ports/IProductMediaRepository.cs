@@ -17,4 +17,5 @@ public interface IProductMediaRepository
     Task<bool> HasVideoAsync(int productId);
     Task SaveChangesAsync();
     Task<ProductMedia?> GetNextImageAsync(int productId, int excludeMediaId);
+    Task<ProductMedia?> GetIsMainAsync(int productId);
 }
