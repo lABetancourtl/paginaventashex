@@ -15,9 +15,6 @@ public class Usuario
         if (string.IsNullOrWhiteSpace(email))
             throw new ArgumentException("El email es obligatorio.");
 
-        if (string.IsNullOrWhiteSpace(passwordHash))
-            throw new ArgumentException("El password es obligatorio.");
-
         return new Usuario
         {
             Email = email.Trim().ToLower(),

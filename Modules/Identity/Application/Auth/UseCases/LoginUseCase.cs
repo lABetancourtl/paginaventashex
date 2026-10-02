@@ -21,6 +21,10 @@ public class LoginUseCase
         if (usuario is null)
             throw new UnauthorizedAccessException("Email o contraseña incorrectos.");
 
+        if (string.IsNullOrEmpty(usuario.PasswordHash))
+            throw new UnauthorizedAccessException(
+                "Este usuario no tiene contraseña asignada. Usa el código OTP para ingresar.");
+
         var passwordValido = BCrypt.Net.BCrypt.Verify(dto.Password, usuario.PasswordHash);
 
         if (!passwordValido)
