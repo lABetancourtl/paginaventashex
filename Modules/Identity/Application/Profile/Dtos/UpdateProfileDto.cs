@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using PaginaVentasNet.Api.Modules.Identity.Domain.Enums;
 
 namespace PaginaVentasNet.Api.Modules.Identity.Application.Profile.Dtos;
 
@@ -16,8 +17,7 @@ public class UpdateProfileDto
     [StringLength(20, ErrorMessage = "El documento no puede superar 20 caracteres.")]
     public string? Documento { get; set; }
 
-    [StringLength(20, ErrorMessage = "El género no puede superar 20 caracteres.")]
-    public string? Genero { get; set; }
+    public Genero? Genero { get; set; }
 
     public DateOnly? FechaNacimiento { get; set; }
 

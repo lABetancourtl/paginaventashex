@@ -1,3 +1,5 @@
+using PaginaVentasNet.Api.Modules.Identity.Domain.Enums;
+
 namespace PaginaVentasNet.Api.Modules.Identity.Domain;
 
 public class Usuario
@@ -12,7 +14,7 @@ public class Usuario
     public string? Nombre { get; private set; }
     public string? Apellido { get; private set; }
     public string? Documento { get; private set; }
-    public string? Genero { get; private set; }
+    public Genero? Genero { get; private set; }
     public DateOnly? FechaNacimiento { get; private set; }
     public string? Telefono { get; private set; }
 
@@ -36,14 +38,14 @@ public class Usuario
         string? nombre,
         string? apellido,
         string? documento,
-        string? genero,
+        Genero? genero,
         DateOnly? fechaNacimiento,
         string? telefono)
     {
         Nombre = nombre?.Trim();
         Apellido = apellido?.Trim();
         Documento = documento?.Trim();
-        Genero = genero?.Trim();
+        Genero = genero;
         FechaNacimiento = fechaNacimiento;
         Telefono = telefono?.Trim();
     }

@@ -2,6 +2,8 @@ using Microsoft.EntityFrameworkCore;
 using PaginaVentasNet.Api.Modules.Catalog.Domain;
 using PaginaVentasNet.Api.Modules.Catalog.Infrastructure.Categories;
 using PaginaVentasNet.Api.Modules.Catalog.Infrastructure.Products;
+using PaginaVentasNet.Api.Modules.Geography.Domain;
+using PaginaVentasNet.Api.Modules.Geography.Infrastructure;
 using PaginaVentasNet.Api.Modules.Identity.Domain;
 using PaginaVentasNet.Api.Modules.Identity.Infrastructure;
 using PaginaVentasNet.Api.Modules.Identity.Infrastructure.Otp;
@@ -22,6 +24,8 @@ public class AppDbContext : DbContext
     public DbSet<Usuario> Usuarios { get; set; }
     public DbSet<ProductMedia> ProductMedia { get; set; }
     public DbSet<OtpCode> OtpCodes { get; set; }
+    public DbSet<Departamento> Departamentos { get; set; }
+    public DbSet<Municipio> Municipios { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -30,5 +34,7 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new ProductMediaConfiguration());
         modelBuilder.ApplyConfiguration(new UsuarioConfiguration());
         modelBuilder.ApplyConfiguration(new OtpConfiguration());
+        modelBuilder.ApplyConfiguration(new DepartamentoConfiguration());
+        modelBuilder.ApplyConfiguration(new MunicipioConfiguration());
     }
 }

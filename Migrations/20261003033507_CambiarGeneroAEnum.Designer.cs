@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PaginaVentasNet.Api.Data;
@@ -11,9 +12,11 @@ using PaginaVentasNet.Api.Data;
 namespace PaginaVentasNet.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261003033507_CambiarGeneroAEnum")]
+    partial class CambiarGeneroAEnum
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -154,41 +157,6 @@ namespace PaginaVentasNet.Api.Migrations
                     b.ToTable("ProductMedia");
                 });
 
-            modelBuilder.Entity("PaginaVentasNet.Api.Modules.Geography.Domain.Departamento", b =>
-                {
-                    b.Property<int>("Codigo")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.HasKey("Codigo");
-
-                    b.ToTable("Departamentos");
-                });
-
-            modelBuilder.Entity("PaginaVentasNet.Api.Modules.Geography.Domain.Municipio", b =>
-                {
-                    b.Property<int>("Codigo")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("DepartamentoCodigo")
-                        .HasColumnType("integer");
-
-                    b.Property<string>("Nombre")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
-
-                    b.HasKey("Codigo");
-
-                    b.HasIndex("DepartamentoCodigo");
-
-                    b.ToTable("Municipios");
-                });
-
             modelBuilder.Entity("PaginaVentasNet.Api.Modules.Identity.Domain.OtpCode", b =>
                 {
                     b.Property<int>("Id")
@@ -307,17 +275,6 @@ namespace PaginaVentasNet.Api.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("PaginaVentasNet.Api.Modules.Geography.Domain.Municipio", b =>
-                {
-                    b.HasOne("PaginaVentasNet.Api.Modules.Geography.Domain.Departamento", "Departamento")
-                        .WithMany("Municipios")
-                        .HasForeignKey("DepartamentoCodigo")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Departamento");
-                });
-
             modelBuilder.Entity("PaginaVentasNet.Api.Modules.Catalog.Domain.Category", b =>
                 {
                     b.Navigation("ChildCategories");
@@ -326,11 +283,6 @@ namespace PaginaVentasNet.Api.Migrations
             modelBuilder.Entity("PaginaVentasNet.Api.Modules.Catalog.Domain.Product", b =>
                 {
                     b.Navigation("Media");
-                });
-
-            modelBuilder.Entity("PaginaVentasNet.Api.Modules.Geography.Domain.Departamento", b =>
-                {
-                    b.Navigation("Municipios");
                 });
 #pragma warning restore 612, 618
         }

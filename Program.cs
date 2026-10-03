@@ -29,6 +29,11 @@ using PaginaVentasNet.Api.Modules.Identity.Infrastructure.Otp;
 using PaginaVentasNet.Api.Modules.Identity.Application.Otp.UseCases;
 using Resend;
 using PaginaVentasNet.Api.Modules.Identity.Application.Profile.UseCases;
+using PaginaVentasNet.Api.Modules.Geography.Application.Departamentos.Ports;
+using PaginaVentasNet.Api.Modules.Geography.Application.Municipios.Ports;
+using PaginaVentasNet.Api.Modules.Geography.Application.Departamentos.UseCases;
+using PaginaVentasNet.Api.Modules.Geography.Application.Municipios.UseCases;
+using PaginaVentasNet.Api.Modules.Geography.Infrastructure;
 
 Env.Load(".env");
 
@@ -133,6 +138,12 @@ builder.Services.AddScoped<VerifyOtpUseCase>();
 builder.Services.AddScoped<GetProfileUseCase>();
 builder.Services.AddScoped<UpdateProfileUseCase>();
 builder.Services.AddScoped<UpdatePasswordUseCase>();
+
+// Geography
+builder.Services.AddScoped<IDepartamentoRepository, DepartamentoRepository>();
+builder.Services.AddScoped<IMunicipioRepository, MunicipioRepository>();
+builder.Services.AddScoped<GetDepartamentosUseCase>();
+builder.Services.AddScoped<GetMunicipiosByDepartamentoUseCase>();
 
 
 

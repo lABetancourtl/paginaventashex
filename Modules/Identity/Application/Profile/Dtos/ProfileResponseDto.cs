@@ -1,3 +1,5 @@
+using PaginaVentasNet.Api.Modules.Identity.Domain.Enums;
+
 namespace PaginaVentasNet.Api.Modules.Identity.Application.Profile.Dtos;
 
 /// <summary>
@@ -11,7 +13,7 @@ public class ProfileResponseDto
     public string? Nombre { get; set; }
     public string? Apellido { get; set; }
     public string? Documento { get; set; }
-    public string? Genero { get; set; }
+    public Genero? Genero { get; set; }
     public DateOnly? FechaNacimiento { get; set; }
     public string? Telefono { get; set; }
     public bool TienePassword { get; set; }
