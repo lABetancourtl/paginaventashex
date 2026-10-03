@@ -17,6 +17,7 @@ public class Usuario
     public Genero? Genero { get; private set; }
     public DateOnly? FechaNacimiento { get; private set; }
     public string? Telefono { get; private set; }
+    public ICollection<Direccion> Direcciones { get; private set; } = new List<Direccion>();
 
     private Usuario() { }
 

@@ -34,6 +34,8 @@ using PaginaVentasNet.Api.Modules.Geography.Application.Municipios.Ports;
 using PaginaVentasNet.Api.Modules.Geography.Application.Departamentos.UseCases;
 using PaginaVentasNet.Api.Modules.Geography.Application.Municipios.UseCases;
 using PaginaVentasNet.Api.Modules.Geography.Infrastructure;
+using PaginaVentasNet.Api.Modules.Identity.Application.Addresses.UseCases;
+using PaginaVentasNet.Api.Modules.Identity.Application.Addresses.Ports;
 
 Env.Load(".env");
 
@@ -144,6 +146,13 @@ builder.Services.AddScoped<IDepartamentoRepository, DepartamentoRepository>();
 builder.Services.AddScoped<IMunicipioRepository, MunicipioRepository>();
 builder.Services.AddScoped<GetDepartamentosUseCase>();
 builder.Services.AddScoped<GetMunicipiosByDepartamentoUseCase>();
+
+// Addresses
+builder.Services.AddScoped<IDireccionRepository, DireccionRepository>();
+builder.Services.AddScoped<CreateDireccionUseCase>();
+builder.Services.AddScoped<GetDireccionesUseCase>();
+builder.Services.AddScoped<DeleteDireccionUseCase>();
+builder.Services.AddScoped<SetDireccionPrincipalUseCase>();
 
 
 

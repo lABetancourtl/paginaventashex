@@ -26,6 +26,7 @@ public class AppDbContext : DbContext
     public DbSet<OtpCode> OtpCodes { get; set; }
     public DbSet<Departamento> Departamentos { get; set; }
     public DbSet<Municipio> Municipios { get; set; }
+    public DbSet<Direccion> Direcciones { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -36,5 +37,6 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new OtpConfiguration());
         modelBuilder.ApplyConfiguration(new DepartamentoConfiguration());
         modelBuilder.ApplyConfiguration(new MunicipioConfiguration());
+        modelBuilder.ApplyConfiguration(new DireccionConfiguration());
     }
 }
