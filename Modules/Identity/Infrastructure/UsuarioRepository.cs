@@ -35,4 +35,15 @@ public class UsuarioRepository : IUsuarioRepository
     {
         await _context.SaveChangesAsync();
     }
+
+    public async Task<Usuario?> GetByIdAsync(int id)
+    {
+        return await _context.Usuarios.FindAsync(id);
+    }
+
+    public Task UpdateAsync(Usuario usuario)
+    {
+        _context.Usuarios.Update(usuario);
+        return Task.CompletedTask;
+    }
 }

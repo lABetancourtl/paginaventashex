@@ -28,6 +28,7 @@ using PaginaVentasNet.Api.Modules.Identity.Application.Otp.Ports;
 using PaginaVentasNet.Api.Modules.Identity.Infrastructure.Otp;
 using PaginaVentasNet.Api.Modules.Identity.Application.Otp.UseCases;
 using Resend;
+using PaginaVentasNet.Api.Modules.Identity.Application.Profile.UseCases;
 
 Env.Load(".env");
 
@@ -127,6 +128,11 @@ builder.Services.AddScoped<IOtpRepository, OtpRepository>();
 builder.Services.AddScoped<IEmailService, ResendEmailService>();
 builder.Services.AddScoped<SendOtpUseCase>();
 builder.Services.AddScoped<VerifyOtpUseCase>();
+
+// Profile
+builder.Services.AddScoped<GetProfileUseCase>();
+builder.Services.AddScoped<UpdateProfileUseCase>();
+builder.Services.AddScoped<UpdatePasswordUseCase>();
 
 
 

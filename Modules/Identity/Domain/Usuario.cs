@@ -8,6 +8,14 @@ public class Usuario
     public string Rol { get; private set; } = string.Empty;
     public DateTime CreadoEn { get; private set; }
 
+    // Datos del perfil
+    public string? Nombre { get; private set; }
+    public string? Apellido { get; private set; }
+    public string? Documento { get; private set; }
+    public string? Genero { get; private set; }
+    public DateOnly? FechaNacimiento { get; private set; }
+    public string? Telefono { get; private set; }
+
     private Usuario() { }
 
     public static Usuario Create(string email, string passwordHash)
@@ -22,5 +30,29 @@ public class Usuario
             Rol = "Cliente",
             CreadoEn = DateTime.UtcNow
         };
+    }
+
+    public void UpdateProfile(
+        string? nombre,
+        string? apellido,
+        string? documento,
+        string? genero,
+        DateOnly? fechaNacimiento,
+        string? telefono)
+    {
+        Nombre = nombre?.Trim();
+        Apellido = apellido?.Trim();
+        Documento = documento?.Trim();
+        Genero = genero?.Trim();
+        FechaNacimiento = fechaNacimiento;
+        Telefono = telefono?.Trim();
+    }
+
+    public void UpdatePassword(string newPasswordHash)
+    {
+        if (string.IsNullOrWhiteSpace(newPasswordHash))
+            throw new ArgumentException("El hash de la contraseña es obligatorio.");
+
+        PasswordHash = newPasswordHash;
     }
 }
