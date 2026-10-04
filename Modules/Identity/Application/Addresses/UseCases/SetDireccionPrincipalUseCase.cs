@@ -14,6 +14,12 @@ public class SetDireccionPrincipalUseCase
         _repository = repository;
     }
 
+    /// <summary>
+    /// Cambia la dirección principal del usuario al especificado por el Id de dirección.
+    /// </summary>
+    /// <param name="usuarioId">Id del usuario.</param>
+    /// <param name="direccionId">Id de la dirección que se desea establecer como principal.</param>
+    /// <returns></returns>
     public async Task ExecuteAsync(int usuarioId, int direccionId)
     {
         var nuevaPrincipal = await _repository.GetEntityByIdAsync(direccionId);

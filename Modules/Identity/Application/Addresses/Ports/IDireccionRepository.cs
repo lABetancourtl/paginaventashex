@@ -3,6 +3,9 @@ using PaginaVentasNet.Api.Modules.Identity.Domain;
 
 namespace PaginaVentasNet.Api.Modules.Identity.Application.Addresses.Ports;
 
+/// <summary>
+/// Repositorio para manejar las operaciones de persistencia relacionadas con las direcciones de los usuarios.
+/// </summary>
 public interface IDireccionRepository
 {
     Task AddAsync(Direccion direccion);

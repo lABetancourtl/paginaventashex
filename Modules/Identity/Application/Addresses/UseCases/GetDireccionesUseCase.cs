@@ -15,6 +15,11 @@ public class GetDireccionesUseCase
         _repository = repository;
     }
 
+    /// <summary>
+    ///     Obtiene todas las direcciones asociadas al usuario especificado.    
+    /// </summary>
+    /// <param name="usuarioId"></param>
+    /// <returns></returns>
     public async Task<List<DireccionResponseDto>> ExecuteAsync(int usuarioId)
     {
         return await _repository.GetByUsuarioIdAsync(usuarioId);

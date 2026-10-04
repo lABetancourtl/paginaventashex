@@ -1,5 +1,8 @@
 namespace PaginaVentasNet.Api.Modules.Identity.Application.Addresses.Dtos;
 
+/// <summary>
+/// DTO de respuesta para representar una dirección del usuario.
+/// </summary>
 public class DireccionResponseDto
 {
     public int Id { get; set; }

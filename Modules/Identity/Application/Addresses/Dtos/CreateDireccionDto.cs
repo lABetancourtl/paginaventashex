@@ -2,6 +2,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace PaginaVentasNet.Api.Modules.Identity.Application.Addresses.Dtos;
 
+/// <summary>
+/// DTO para la creación de una nueva dirección del usuario.
+/// </summary>
 public class CreateDireccionDto
 {
     [Required(ErrorMessage = "El código del departamento es obligatorio.")]

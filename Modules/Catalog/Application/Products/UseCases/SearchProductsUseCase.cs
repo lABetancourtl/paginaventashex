@@ -4,7 +4,7 @@ using PaginaVentasNet.Api.Modules.Catalog.Application.Products.Ports;
 namespace PaginaVentasNet.Api.Modules.Catalog.Application.Products.UseCases;
 
 /// <summary> 
-/// Caso de uso para buscar productos en el catálogo.
+/// Caso de uso para buscar productos en el catálogo, usado por Usuarios no administradores.
 /// </summary>
 public class SearchProductsUseCase
 {

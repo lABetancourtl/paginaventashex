@@ -107,10 +107,9 @@ builder.Services.AddScoped<UpdateCategoryUseCase>();
 builder.Services.AddScoped<GetCategoryTreeUseCase>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<CreateProductUseCase>();
-builder.Services.AddScoped<GetProductsUseCase>();
 builder.Services.AddScoped<UpdateProductUseCase>();
 builder.Services.AddScoped<SearchProductsUseCase>();
-
+builder.Services.AddScoped<AdminSearchProductsUseCase>();
 
 // Identity
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();

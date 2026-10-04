@@ -224,5 +224,63 @@ public class ProductRepository : IProductRepository
         };
     }
 
+    public async Task<PagedResultDto<ProductResponseDto>> AdminSearchAsync(AdminSearchProductsDto dto)
+    {
+        const int pageSize = 20;
+
+        if (dto.Page < 1)
+            dto.Page = 1;
+
+        var query = _context.Products
+            .Include(p => p.Category)
+            .Include(p => p.Media)
+            .AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(dto.Search))
+        {
+            var search = dto.Search.ToLower();
+            query = query.Where(p => p.Name.ToLower().Contains(search));
+        }
+
+        if (dto.CategoryIds != null && dto.CategoryIds.Count > 0)
+            query = query.Where(p => dto.CategoryIds.Contains(p.CategoryId));
+
+        if (dto.IsActive.HasValue)
+            query = query.Where(p => p.IsActive == dto.IsActive.Value);
+
+        var totalItems = await query.CountAsync();
+
+        var items = await query
+            .OrderBy(p => p.Name)
+            .Skip((dto.Page - 1) * pageSize)
+            .Take(pageSize)
+            .Select(p => new ProductResponseDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                Description = p.Description,
+                Price = p.Price,
+                Sku = p.Sku,
+                Stock = p.Stock,
+                IsActive = p.IsActive,
+                CategoryId = p.CategoryId,
+                CategoryName = p.Category!.Name,
+                MainImageUrl = p.Media
+                    .Where(m => m.IsMain)
+                    .Select(m => m.Url)
+                    .FirstOrDefault(),
+                Media = new List<ProductMediaResponseDto>(),
+                CreatedAtUtc = p.CreatedAtUtc
+            })
+            .ToListAsync();
+
+        return new PagedResultDto<ProductResponseDto>
+        {
+            Items = items,
+            TotalItems = totalItems,
+            Page = dto.Page
+        };
+    }   
+
 
 }

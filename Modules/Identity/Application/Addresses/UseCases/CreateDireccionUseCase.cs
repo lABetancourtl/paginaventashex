@@ -17,6 +17,12 @@ public class CreateDireccionUseCase
         _repository = repository;
     }
 
+    /// <summary>
+    /// Agrega una nueva dirección para el usuario especificado. Si es la primera dirección, se marca como principal. 
+    /// </summary>
+    /// <param name="usuarioId"></param>
+    /// <param name="dto"></param>
+    /// <returns></returns>
     public async Task<int> ExecuteAsync(int usuarioId, CreateDireccionDto dto)
     {
         var direcciones = await _repository.GetByUsuarioIdAsync(usuarioId);

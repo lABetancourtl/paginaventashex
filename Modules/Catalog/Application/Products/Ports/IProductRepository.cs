@@ -17,4 +17,5 @@ public interface IProductRepository
     Task UpdateAsync(Product product);
     Task<Product?> GetEntityByIdAsync(int id);
     Task<PagedResultDto<ProductResponseDto>> SearchAsync(SearchProductsDto dto);
+    Task<PagedResultDto<ProductResponseDto>> AdminSearchAsync(AdminSearchProductsDto dto);
 }

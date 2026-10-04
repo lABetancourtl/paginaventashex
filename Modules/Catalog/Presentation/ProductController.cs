@@ -16,20 +16,20 @@ namespace PaginaVentasNet.Api.Modules.Catalog.Presentation;
 public class ProductController : ApiController
 {
     private readonly CreateProductUseCase _createProductUseCase;
-    private readonly GetProductsUseCase _getProductsUseCase;
     private readonly UpdateProductUseCase _updateProductUseCase;
     private readonly SearchProductsUseCase _searchProductsUseCase;
+    private readonly AdminSearchProductsUseCase _adminSearchProductsUseCase;
 
     public ProductController(
         CreateProductUseCase createProductUseCase,
-        GetProductsUseCase getProductsUseCase,
         UpdateProductUseCase updateProductUseCase,
-        SearchProductsUseCase searchProductsUseCase)
+        SearchProductsUseCase searchProductsUseCase,
+        AdminSearchProductsUseCase adminSearchProductsUseCase)
     {
         _createProductUseCase = createProductUseCase;
-        _getProductsUseCase = getProductsUseCase;
         _updateProductUseCase = updateProductUseCase;
         _searchProductsUseCase = searchProductsUseCase;
+        _adminSearchProductsUseCase = adminSearchProductsUseCase;
     }
 
     /// <summary>
@@ -51,46 +51,6 @@ public class ProductController : ApiController
         {
             return Failure<int>("PRODUCT_VALIDATION", ex.Message, 400);
         }
-    }
-
-    /// <summary>
-    /// Obtiene todos los productos activos del catálogo ordenados por nombre.
-    /// </summary>
-    /// <returns>Lista de productos activos.</returns>
-    [HttpGet]
-    public async Task<ActionResult<ApiResponse<List<ProductResponseDto>>>> GetAll()
-    {
-        var products = await _getProductsUseCase.ExecuteAsync();
-        return Success(products);
-    }
-
-    /// <summary>
-    /// Obtiene todos los productos inactivos del catálogo ordenados por nombre.
-    /// </summary>
-    /// <returns>Lista de productos inactivos.</returns>
-    [HttpGet("inactive")]
-    public async Task<ActionResult<ApiResponse<List<ProductResponseDto>>>> GetAllDeactive()
-    {
-        var products = await _getProductsUseCase.ExecuteDeactiveAsync();
-        return Success(products);
-    }
-
-
-    /// <summary>
-    /// Obtiene un producto específico por su Id.
-    /// </summary>
-    /// <param name="id">Id del producto a buscar.</param>
-    /// <returns>Datos del producto encontrado o 404 si no existe.</returns>
-    [HttpGet("{id}")]
-    public async Task<ActionResult<ApiResponse<ProductResponseDto>>> GetById(int id)
-    {
-        var product = await _getProductsUseCase.ExecuteByIdAsync(id);
-
-        if (product == null)
-            return Failure<ProductResponseDto>("PRODUCT_NOT_FOUND",
-                $"No se encontró el producto con Id {id}.", 404);
-
-        return Success(product);
     }
 
     /// <summary>
@@ -179,6 +139,20 @@ public class ProductController : ApiController
         [FromQuery] SearchProductsDto dto)
     {
         var result = await _searchProductsUseCase.ExecuteAsync(dto);
+        return Success(result);
+    }
+
+    /// <summary>
+    /// Búsqueda de productos para el panel de administración.
+    /// Permite filtrar por múltiples categorías, nombre y estado.
+    /// Muestra 20 productos por página incluyendo activos e inactivos.
+    /// </summary>
+    /// <param name="dto">Filtros: search, categoryIds, isActive, page.</param>
+    [HttpGet("admin")]
+    public async Task<ActionResult<ApiResponse<PagedResultDto<ProductResponseDto>>>> AdminSearch(
+        [FromQuery] AdminSearchProductsDto dto)
+    {
+        var result = await _adminSearchProductsUseCase.ExecuteAsync(dto);
         return Success(result);
     }
 }

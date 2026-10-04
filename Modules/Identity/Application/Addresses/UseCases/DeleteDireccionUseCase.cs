@@ -15,6 +15,15 @@ public class DeleteDireccionUseCase
         _repository = repository;
     }
 
+    /// <summary>
+    /// Elimina una dirección del usuario y maneja la lógica de asignación de la dirección principal si es necesario.
+    /// Si la dirección eliminada era la principal, se asigna la siguiente dirección disponible como principal.
+    /// Si no hay más direcciones, no se asigna ninguna como principal.
+    /// </summary>
+    /// <param name="usuarioId"></param>
+    /// <param name="direccionId"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task ExecuteAsync(int usuarioId, int direccionId)
     {
         var direccion = await _repository.GetEntityByIdAsync(direccionId);
