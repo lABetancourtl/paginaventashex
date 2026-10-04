@@ -9,7 +9,7 @@ public class ProfileResponseDto
 {
     public int Id { get; set; }
     public string Email { get; set; } = string.Empty;
-    public string Rol { get; set; } = string.Empty;
+    public Rol Rol { get; set; }
     public string? Nombre { get; set; }
     public string? Apellido { get; set; }
     public string? Documento { get; set; }

@@ -36,6 +36,7 @@ using PaginaVentasNet.Api.Modules.Geography.Application.Municipios.UseCases;
 using PaginaVentasNet.Api.Modules.Geography.Infrastructure;
 using PaginaVentasNet.Api.Modules.Identity.Application.Addresses.UseCases;
 using PaginaVentasNet.Api.Modules.Identity.Application.Addresses.Ports;
+using PaginaVentasNet.Api.Modules.Identity.Application.Users.UseCases;
 
 Env.Load(".env");
 
@@ -116,6 +117,7 @@ builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<RegisterUseCase>();
 builder.Services.AddScoped<LoginUseCase>();
+builder.Services.AddScoped<ChangeRolUseCase>();
 
 // Media
 builder.Services.AddScoped<IProductMediaRepository, ProductMediaRepository>();

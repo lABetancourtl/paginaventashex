@@ -36,6 +36,7 @@ public class ProductController : ApiController
     /// <param name="dto">Datos del producto: nombre, descripción, precio, SKU, stock y categoría.</param>
     /// <returns>Id del producto creado.</returns>
     [HttpPost]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ApiResponse<int>>> Create(CreateProductDto dto)
     {
         try
@@ -60,6 +61,7 @@ public class ProductController : ApiController
     /// <param name="dto">Nuevos datos del producto.</param>
     /// <returns>True si se actualizó correctamente o 404 si no existe.</returns>
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ApiResponse<bool>>> Update(int id, UpdateProductDto dto)
     {
         try
@@ -84,6 +86,7 @@ public class ProductController : ApiController
     /// <param name="id">Id del producto a activar.</param>
     /// <returns>True si se activó correctamente, 400 si ya estaba activo o 404 si no existe.</returns>
     [HttpPatch("{id}/activate")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ApiResponse<bool>>> Activate(int id)
     {
         try
@@ -109,6 +112,7 @@ public class ProductController : ApiController
     /// <param name="id">Id del producto a desactivar.</param>
     /// <returns>True si se desactivó correctamente, 400 si ya estaba inactivo o 404 si no existe.</returns>
     [HttpPatch("{id}/deactivate")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ApiResponse<bool>>> Deactivate(int id)
     {
         try
@@ -128,6 +132,21 @@ public class ProductController : ApiController
     }
 
     /// <summary>
+    /// Búsqueda de productos para el panel de administración.
+    /// Permite filtrar por múltiples categorías, nombre y estado.
+    /// Muestra 20 productos por página incluyendo activos e inactivos.
+    /// </summary>
+    /// <param name="dto">Filtros: search, categoryIds, isActive, page.</param>
+    [HttpGet("admin")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<ApiResponse<PagedResultDto<ProductResponseDto>>>> AdminSearch(
+        [FromQuery] AdminSearchProductsDto dto)
+    {
+        var result = await _adminSearchProductsUseCase.ExecuteAsync(dto);
+        return Success(result);
+    }
+
+    /// <summary>
     /// Busca productos por nombre o categoría con paginación.
     /// Si no se especifica búsqueda, retorna todos los productos activos.
     /// Muestra 10 productos por página.
@@ -139,20 +158,6 @@ public class ProductController : ApiController
         [FromQuery] SearchProductsDto dto)
     {
         var result = await _searchProductsUseCase.ExecuteAsync(dto);
-        return Success(result);
-    }
-
-    /// <summary>
-    /// Búsqueda de productos para el panel de administración.
-    /// Permite filtrar por múltiples categorías, nombre y estado.
-    /// Muestra 20 productos por página incluyendo activos e inactivos.
-    /// </summary>
-    /// <param name="dto">Filtros: search, categoryIds, isActive, page.</param>
-    [HttpGet("admin")]
-    public async Task<ActionResult<ApiResponse<PagedResultDto<ProductResponseDto>>>> AdminSearch(
-        [FromQuery] AdminSearchProductsDto dto)
-    {
-        var result = await _adminSearchProductsUseCase.ExecuteAsync(dto);
         return Success(result);
     }
 }

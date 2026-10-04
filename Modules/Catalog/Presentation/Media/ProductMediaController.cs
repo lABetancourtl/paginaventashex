@@ -37,6 +37,7 @@ public class ProductMediaController : ApiController
     /// <param name="isMain">Indica si es la imagen principal del producto.</param>
     [HttpPost("images")]
     [Consumes("multipart/form-data")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ApiResponse<ProductMediaResponseDto>>> UploadImage(
         int productId,
         IFormFile file)
@@ -60,6 +61,7 @@ public class ProductMediaController : ApiController
     /// <param name="file">Archivo de video a subir.</param>
     [HttpPost("video")]
     [Consumes("multipart/form-data")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ApiResponse<ProductMediaResponseDto>>> UploadVideo(
         int productId,
         IFormFile file)
@@ -101,6 +103,7 @@ public class ProductMediaController : ApiController
     /// <param name="mediaId"> es el ID del archivo multimedia.</param>
     /// <returns></returns>
     [HttpDelete("{mediaId}")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ApiResponse<bool>>> Delete(
         int productId,
         int mediaId)
@@ -123,6 +126,7 @@ public class ProductMediaController : ApiController
     /// <param name="mediaId">Id del archivo multimedia.</param>
     /// <returns></returns>
     [HttpPatch("{mediaId}/main")]
+    [Authorize(Roles = "Admin")]
     public async Task<ActionResult<ApiResponse<bool>>> SetAsMain(
         int productId,
         int mediaId)

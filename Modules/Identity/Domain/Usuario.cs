@@ -7,7 +7,7 @@ public class Usuario
     public int Id { get; private set; }
     public string Email { get; private set; } = string.Empty;
     public string PasswordHash { get; private set; } = string.Empty;
-    public string Rol { get; private set; } = string.Empty;
+    public Rol Rol { get; private set; }
     public DateTime CreadoEn { get; private set; }
 
     // Datos del perfil
@@ -30,7 +30,7 @@ public class Usuario
         {
             Email = email.Trim().ToLower(),
             PasswordHash = passwordHash,
-            Rol = "Cliente",
+            Rol = Rol.Cliente,
             CreadoEn = DateTime.UtcNow
         };
     }
@@ -57,5 +57,10 @@ public class Usuario
             throw new ArgumentException("El hash de la contraseña es obligatorio.");
 
         PasswordHash = newPasswordHash;
+    }
+
+    public void ChangeRol(Rol rol)
+    {
+        Rol = rol;
     }
 }

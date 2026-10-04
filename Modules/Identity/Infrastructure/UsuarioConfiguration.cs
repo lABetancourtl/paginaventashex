@@ -19,10 +19,11 @@ public class UsuarioConfiguration : IEntityTypeConfiguration<Usuario>
 
         builder.Property(u => u.PasswordHash)
             .IsRequired();
-
+            
         builder.Property(u => u.Rol)
             .IsRequired()
-            .HasMaxLength(50);
+            .HasConversion<string>()
+            .HasMaxLength(20);
 
         builder.Property(u => u.Genero)
             .HasConversion<string>()
