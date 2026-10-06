@@ -21,6 +21,10 @@ public class LoginUseCase
         if (usuario is null)
             throw new UnauthorizedAccessException("Email o contraseña incorrectos.");
 
+        if (!usuario.IsActive)
+            throw new UnauthorizedAccessException(
+            "Esta cuenta está desactivada. Contacta al soporte para reactivarla.");
+
         if (string.IsNullOrEmpty(usuario.PasswordHash))
             throw new UnauthorizedAccessException(
                 "Este usuario no tiene contraseña asignada. Usa el código OTP para ingresar.");

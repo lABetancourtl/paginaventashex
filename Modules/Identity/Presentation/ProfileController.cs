@@ -65,6 +65,21 @@ public class ProfileController : ApiController
         }
     }
 
+    [HttpPatch("deactivate")]
+    public async Task<ActionResult<ApiResponse<bool>>> DeactivateProfile()
+    {
+        try
+        {
+            var usuarioId = GetUsuarioId();
+            await _updateProfileUseCase.DeactivateProfileAsync(usuarioId);
+            return Success(true);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Failure<bool>("PROFILE_NOT_FOUND", ex.Message, 404);
+        }
+    }
+
     /// <summary>
     /// Asigna o cambia la contraseña del usuario autenticado.
     /// </summary>
@@ -87,20 +102,6 @@ public class ProfileController : ApiController
         }
     }
 
-    // [HttpPatch("deactivate")]
-    // public async Task<ActionResult<ApiResponse<bool>>> DeactivateProfile()
-    // {
-    //     try
-    //     {
-    //         var usuarioId = GetUsuarioId();
-    //         await _updateProfileUseCase.DeactivateProfileAsync(usuarioId);
-    //         return Success(true);
-    //     }
-    //     catch (InvalidOperationException ex)
-    //     {
-    //         return Failure<bool>("PROFILE_NOT_FOUND", ex.Message, 404);
-    //     }
-    // }
 
     /// <summary>
     /// Obtiene el Id del usuario autenticado a partir de los claims del token. Lanza una excepción si no se puede obtener el Id.

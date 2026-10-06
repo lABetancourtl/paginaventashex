@@ -33,4 +33,17 @@ public class UpdateProfileUseCase
         await _repository.UpdateAsync(usuario);
         await _repository.SaveChangesAsync();
     }
+
+    public async Task DeactivateProfileAsync(int usuarioId)
+    {
+        var usuario = await _repository.GetByIdAsync(usuarioId);
+
+        if (usuario is null)
+            throw new InvalidOperationException("Usuario no encontrado.");
+
+        usuario.Deactivate();
+        
+        await _repository.UpdateAsync(usuario);
+        await _repository.SaveChangesAsync();
+    }
 }

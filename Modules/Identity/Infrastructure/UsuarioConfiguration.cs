@@ -28,5 +28,8 @@ public class UsuarioConfiguration : IEntityTypeConfiguration<Usuario>
         builder.Property(u => u.Genero)
             .HasConversion<string>()
             .HasMaxLength(50);
+
+        builder.Property(u => u.IsActive)
+            .HasDefaultValue(true);
     }
 }

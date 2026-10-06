@@ -39,6 +39,10 @@ public class VerifyOtpUseCase
 
         var usuario = await _usuarioRepository.GetByEmailAsync(dto.Email);
 
+        if (usuario is not null && !usuario.IsActive)
+            throw new UnauthorizedAccessException(
+                "Esta cuenta está desactivada. Contacta al soporte para reactivarla.");
+
         if (usuario is null)
         {
             usuario = Usuario.Create(dto.Email, string.Empty);
