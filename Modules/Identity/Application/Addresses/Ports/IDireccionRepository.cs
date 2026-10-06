@@ -14,4 +14,6 @@ public interface IDireccionRepository
     Task<Direccion?> GetPrincipalByUsuarioIdAsync(int usuarioId);
     Task RemoveAsync(Direccion direccion);
     Task SaveChangesAsync();
+    Task<string> GetDepartamentoNombreAsync(int departamentoCodigo);
+    Task<string> GetMunicipioNombreAsync(int municipioCodigo);
 }

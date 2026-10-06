@@ -42,6 +42,9 @@ using System.Threading.RateLimiting;
 using PaginaVentasNet.Api.Modules.Cart.Application.Ports;
 using PaginaVentasNet.Api.Modules.Cart.Infrastructure;
 using PaginaVentasNet.Api.Modules.Cart.Application.UseCases;
+using PaginaVentasNet.Api.Modules.Orders.Application.Ports;
+using PaginaVentasNet.Api.Modules.Orders.Infrastructure;
+using PaginaVentasNet.Api.Modules.Orders.Application.UseCases;
 
 Env.Load(".env");
 
@@ -168,6 +171,12 @@ builder.Services.AddScoped<UpdateCartItemUseCase>();
 builder.Services.AddScoped<RemoveCartItemUseCase>();
 builder.Services.AddScoped<ClearCartUseCase>();
 
+// Orders
+builder.Services.AddScoped<IOrderRepository, OrderRepository>();
+builder.Services.AddScoped<CreateOrderUseCase>();
+builder.Services.AddScoped<GetOrdersUseCase>();
+builder.Services.AddScoped<CancelOrderUseCase>();
+builder.Services.AddScoped<UpdateOrderStatusUseCase>();
 
 
 // Pokemon Api de prueba

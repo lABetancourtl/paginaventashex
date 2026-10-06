@@ -77,4 +77,16 @@ public class Product
             throw new InvalidOperationException("El producto ya está inactivo.");
         IsActive = false;
     }
+
+    public void ReduceStock(int quantity)
+    {
+        if (quantity > Stock)
+            throw new InvalidOperationException("Stock insuficiente.");
+        Stock -= quantity;
+    }
+
+    public void RestoreStock(int quantity)
+    {
+        Stock += quantity;
+    }
 }

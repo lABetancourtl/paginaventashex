@@ -67,4 +67,18 @@ public class DireccionRepository : IDireccionRepository
     {
         await _context.SaveChangesAsync();
     }
+
+    public async Task<string> GetDepartamentoNombreAsync(int departamentoCodigo)
+    {
+        var departamento = await _context.Departamentos
+            .FirstOrDefaultAsync(d => d.Codigo == departamentoCodigo);
+        return departamento?.Nombre ?? string.Empty;
+    }
+
+    public async Task<string> GetMunicipioNombreAsync(int municipioCodigo)
+    {
+        var municipio = await _context.Municipios
+            .FirstOrDefaultAsync(m => m.Codigo == municipioCodigo);
+        return municipio?.Nombre ?? string.Empty;
+    }
 }
