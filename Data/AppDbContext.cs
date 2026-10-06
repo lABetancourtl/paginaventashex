@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using PaginaVentasNet.Api.Modules.Cart.Domain;
+using PaginaVentasNet.Api.Modules.Cart.Infrastructure;
 using PaginaVentasNet.Api.Modules.Catalog.Domain;
 using PaginaVentasNet.Api.Modules.Catalog.Infrastructure.Categories;
 using PaginaVentasNet.Api.Modules.Catalog.Infrastructure.Products;
@@ -27,6 +29,8 @@ public class AppDbContext : DbContext
     public DbSet<Departamento> Departamentos { get; set; }
     public DbSet<Municipio> Municipios { get; set; }
     public DbSet<Direccion> Direcciones { get; set; }
+    public DbSet<ShoppingCart> Carts { get; set; }
+    public DbSet<CartItem> CartItems { get; set; }  
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -38,5 +42,7 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new DepartamentoConfiguration());
         modelBuilder.ApplyConfiguration(new MunicipioConfiguration());
         modelBuilder.ApplyConfiguration(new DireccionConfiguration());
+        modelBuilder.ApplyConfiguration(new CartConfiguration());
+        modelBuilder.ApplyConfiguration(new CartItemConfiguration());
     }
 }

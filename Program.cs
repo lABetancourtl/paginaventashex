@@ -39,6 +39,9 @@ using PaginaVentasNet.Api.Modules.Identity.Application.Addresses.Ports;
 using PaginaVentasNet.Api.Modules.Identity.Application.Users.UseCases;
 using Microsoft.AspNetCore.RateLimiting;
 using System.Threading.RateLimiting;
+using PaginaVentasNet.Api.Modules.Cart.Application.Ports;
+using PaginaVentasNet.Api.Modules.Cart.Infrastructure;
+using PaginaVentasNet.Api.Modules.Cart.Application.UseCases;
 
 Env.Load(".env");
 
@@ -156,6 +159,14 @@ builder.Services.AddScoped<CreateDireccionUseCase>();
 builder.Services.AddScoped<GetDireccionesUseCase>();
 builder.Services.AddScoped<DeleteDireccionUseCase>();
 builder.Services.AddScoped<SetDireccionPrincipalUseCase>();
+
+// Cart
+builder.Services.AddScoped<ICartRepository, CartRepository>();
+builder.Services.AddScoped<GetCartUseCase>();
+builder.Services.AddScoped<AddCartItemUseCase>();
+builder.Services.AddScoped<UpdateCartItemUseCase>();
+builder.Services.AddScoped<RemoveCartItemUseCase>();
+builder.Services.AddScoped<ClearCartUseCase>();
 
 
 
