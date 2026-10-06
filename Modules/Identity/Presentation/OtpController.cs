@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using PaginaVentasNet.Api.Common.Responses;
 using PaginaVentasNet.Api.Controllers;
 using PaginaVentasNet.Api.Modules.Identity.Application.Auth.Dtos;
@@ -28,6 +29,7 @@ public class OtpController : ApiController
     /// </summary>
     /// <param name="dto">Email del usuario.</param>
     [HttpPost("send")]
+    [EnableRateLimiting("otp")]
     public async Task<ActionResult<ApiResponse<bool>>> Send(SendOtpDto dto)
     {
         try
@@ -48,6 +50,7 @@ public class OtpController : ApiController
     /// <param name="dto">Email y código OTP.</param>
     /// <returns>Token JWT válido.</returns>
     [HttpPost("verify")]
+    [EnableRateLimiting("auth")]
     public async Task<ActionResult<ApiResponse<AuthResponseDto>>> Verify(VerifyOtpDto dto)
     {
         try

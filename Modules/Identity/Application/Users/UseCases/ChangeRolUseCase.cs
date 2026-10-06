@@ -16,6 +16,14 @@ public class ChangeRolUseCase
         _repository = repository;
     }
 
+    /// <summary>
+    /// Cambia el rol de un usuario.
+    /// </summary>
+    /// <param name="usuarioId"></param>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="ArgumentException"></exception>
     public async Task ExecuteAsync(int usuarioId, ChangeRolDto dto)
     {
         var usuario = await _repository.GetByIdAsync(usuarioId);

@@ -11,8 +11,8 @@ namespace PaginaVentasNet.Api.Modules.Identity.Presentation;
 /// Controller para la gestión de usuarios.
 /// Solo accesible por administradores.
 /// </summary>
-[Authorize(Roles = "Admin")]
 [Route("api/users")]
+[Authorize(Roles = "Admin")]
 public class UserController : ApiController
 {
     private readonly ChangeRolUseCase _changeRolUseCase;

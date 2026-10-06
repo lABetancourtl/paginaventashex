@@ -37,6 +37,8 @@ using PaginaVentasNet.Api.Modules.Geography.Infrastructure;
 using PaginaVentasNet.Api.Modules.Identity.Application.Addresses.UseCases;
 using PaginaVentasNet.Api.Modules.Identity.Application.Addresses.Ports;
 using PaginaVentasNet.Api.Modules.Identity.Application.Users.UseCases;
+using Microsoft.AspNetCore.RateLimiting;
+using System.Threading.RateLimiting;
 
 Env.Load(".env");
 
@@ -182,6 +184,46 @@ builder.Services.AddOpenApi(options =>
     });
 });
 
+// Rate Limiting
+builder.Services.AddRateLimiter(options =>
+{
+    // Para endpoints de autenticación — 5 intentos por minuto por IP
+    options.AddFixedWindowLimiter("auth", config =>
+    {
+        config.PermitLimit = 5;
+        config.Window = TimeSpan.FromMinutes(1);
+        config.QueueLimit = 0;
+        config.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+    });
+
+    // Para envío de OTP — 3 intentos por minuto por IP
+    options.AddFixedWindowLimiter("otp", config =>
+    {
+        config.PermitLimit = 3;
+        config.Window = TimeSpan.FromMinutes(1);
+        config.QueueLimit = 0;
+        config.QueueProcessingOrder = QueueProcessingOrder.OldestFirst;
+    });
+
+    // Respuesta cuando se excede el límite
+    options.OnRejected = async (context, token) =>
+    {
+        context.HttpContext.Response.StatusCode = 429;
+        context.HttpContext.Response.ContentType = "application/json";
+        await context.HttpContext.Response.WriteAsync("""
+            {
+                "success": false,
+                "statusCode": 429,
+                "data": null,
+                "error": {
+                    "code": "RATE_LIMIT_EXCEEDED",
+                    "message": "Demasiados intentos. Por favor espera un minuto antes de intentar de nuevo."
+                }
+            }
+            """, token);
+    };
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -199,6 +241,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseExceptionHandler();
 app.UseAuthentication();
+app.UseRateLimiter();
 app.UseAuthorization();
 app.MapControllers();
 app.Run();

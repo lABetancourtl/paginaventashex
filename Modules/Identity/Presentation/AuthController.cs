@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using PaginaVentasNet.Api.Common.Responses;
 using PaginaVentasNet.Api.Controllers;
 using PaginaVentasNet.Api.Modules.Identity.Application.Auth.Dtos;
@@ -19,6 +20,7 @@ public class AuthController : ApiController
 
 
     [HttpPost("login")]
+    [EnableRateLimiting("auth")]
     public async Task<ActionResult<ApiResponse<AuthResponseDto>>> Login(LoginDto dto)
     {
         try
