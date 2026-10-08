@@ -16,13 +16,16 @@ public class PaymentController : ApiController
 {
     private readonly ProcessWebhookUseCase _processWebhookUseCase;
     private readonly GetPaymentInfoUseCase _getPaymentInfoUseCase;
+    private readonly GetPaymentTransactionsUseCase _getTransactionsUseCase;
 
     public PaymentController(
         ProcessWebhookUseCase processWebhookUseCase,
-        GetPaymentInfoUseCase getPaymentInfoUseCase)
+        GetPaymentInfoUseCase getPaymentInfoUseCase,
+        GetPaymentTransactionsUseCase getTransactionsUseCase)
     {
         _processWebhookUseCase = processWebhookUseCase;
         _getPaymentInfoUseCase = getPaymentInfoUseCase;
+        _getTransactionsUseCase = getTransactionsUseCase;
     }
 
     /// <summary>
@@ -62,6 +65,17 @@ public class PaymentController : ApiController
         {
             return Failure<PaymentInfoDto>("PAYMENT_ERROR", ex.Message, 400);
         }
+    }
+
+    /// <summary>
+    /// Obtiene el historial completo de transacciones de pago. Solo Admin.
+    /// </summary>
+    [HttpGet("transactions")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<ApiResponse<List<PaymentTransactionResponseDto>>>> GetTransactions()
+    {
+        var transactions = await _getTransactionsUseCase.ExecuteAsync();
+        return Success(transactions);
     }
 
     private int GetUsuarioId()

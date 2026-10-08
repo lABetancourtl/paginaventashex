@@ -185,6 +185,7 @@ builder.Services.AddScoped<UpdateOrderStatusUseCase>();
 builder.Services.AddScoped<IPaymentService, WompiService>();
 builder.Services.AddScoped<ProcessWebhookUseCase>();
 builder.Services.AddScoped<GetPaymentInfoUseCase>();
+builder.Services.AddScoped<GetPaymentTransactionsUseCase>();
 builder.Services.AddScoped<IPaymentTransactionRepository, PaymentTransactionRepository>();
 
 
