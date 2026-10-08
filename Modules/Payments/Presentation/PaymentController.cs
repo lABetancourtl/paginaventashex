@@ -35,7 +35,8 @@ public class PaymentController : ApiController
     {
         try
         {
-            await _processWebhookUseCase.ExecuteAsync(dto);
+            var rawPayload = System.Text.Json.JsonSerializer.Serialize(dto);
+            await _processWebhookUseCase.ExecuteAsync(dto, rawPayload);
             return Ok();
         }
         catch (UnauthorizedAccessException)

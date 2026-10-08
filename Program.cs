@@ -185,6 +185,7 @@ builder.Services.AddScoped<UpdateOrderStatusUseCase>();
 builder.Services.AddScoped<IPaymentService, WompiService>();
 builder.Services.AddScoped<ProcessWebhookUseCase>();
 builder.Services.AddScoped<GetPaymentInfoUseCase>();
+builder.Services.AddScoped<IPaymentTransactionRepository, PaymentTransactionRepository>();
 
 
 // Pokemon Api de prueba

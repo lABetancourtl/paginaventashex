@@ -11,6 +11,8 @@ using PaginaVentasNet.Api.Modules.Identity.Infrastructure;
 using PaginaVentasNet.Api.Modules.Identity.Infrastructure.Otp;
 using PaginaVentasNet.Api.Modules.Orders.Domain;
 using PaginaVentasNet.Api.Modules.Orders.Infrastructure;
+using PaginaVentasNet.Api.Modules.Payments.Domain;
+using PaginaVentasNet.Api.Modules.Payments.Infrastructure;
 
 namespace PaginaVentasNet.Api.Data;
 
@@ -35,6 +37,7 @@ public class AppDbContext : DbContext
     public DbSet<CartItem> CartItems { get; set; } 
     public DbSet<Order> Orders { get; set; }
     public DbSet<OrderItem> OrderItems { get; set; } 
+    public DbSet<PaymentTransaction> PaymentTransactions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -50,5 +53,6 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new CartItemConfiguration());
         modelBuilder.ApplyConfiguration(new OrderConfiguration());
         modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
+        modelBuilder.ApplyConfiguration(new PaymentTransactionConfiguration());
     }
 }
