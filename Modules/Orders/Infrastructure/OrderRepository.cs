@@ -3,6 +3,7 @@ using PaginaVentasNet.Api.Data;
 using PaginaVentasNet.Api.Modules.Orders.Application.Dtos;
 using PaginaVentasNet.Api.Modules.Orders.Application.Ports;
 using PaginaVentasNet.Api.Modules.Orders.Domain;
+using PaginaVentasNet.Api.Modules.Orders.Domain.Enums;
 
 namespace PaginaVentasNet.Api.Modules.Orders.Infrastructure;
 
@@ -86,9 +87,12 @@ public class OrderRepository : IOrderRepository
             .ToListAsync();
     }
 
+    
     public async Task<List<OrderResponseDto>> GetAllAsync()
     {
         return await _context.Orders
+            .Where(o => o.Status == OrderStatus.Confirmado || 
+                        o.Status == OrderStatus.Enviado)
             .OrderByDescending(o => o.CreatedAtUtc)
             .Select(o => new OrderResponseDto
             {

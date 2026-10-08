@@ -44,7 +44,7 @@ public class Order
         return new Order
         {
             UsuarioId = usuarioId,
-            Status = OrderStatus.Pendiente,
+            Status = OrderStatus.PendientePago,
             Total = 0,
             DepartamentoNombre = departamentoNombre,
             MunicipioNombre = municipioNombre,
@@ -69,18 +69,31 @@ public class Order
             throw new InvalidOperationException(
                 "No se puede cambiar el estado de un pedido cancelado.");
 
-        if (Status == OrderStatus.Entregado)
+        if (Status == OrderStatus.PendientePago)
             throw new InvalidOperationException(
-                "No se puede cambiar el estado de un pedido entregado.");
+                "No se puede cambiar el estado de un pedido con pago pendiente.");
 
         Status = status;
     }
 
+    public void ConfirmPayment()
+    {
+        if (Status != OrderStatus.PendientePago)
+            throw new InvalidOperationException(
+                "El pedido no está en estado de pago pendiente.");
+
+        Status = OrderStatus.Confirmado;
+    }
+
     public void Cancel()
     {
-        if (Status == OrderStatus.Enviado || Status == OrderStatus.Entregado)
+        if (Status == OrderStatus.Enviado)
             throw new InvalidOperationException(
-                "No se puede cancelar un pedido que ya fue enviado o entregado.");
+                "No se puede cancelar un pedido que ya fue enviado.");
+
+        if (Status == OrderStatus.Cancelado)
+            throw new InvalidOperationException(
+                "El pedido ya está cancelado.");
 
         Status = OrderStatus.Cancelado;
     }

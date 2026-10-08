@@ -45,6 +45,9 @@ using PaginaVentasNet.Api.Modules.Cart.Application.UseCases;
 using PaginaVentasNet.Api.Modules.Orders.Application.Ports;
 using PaginaVentasNet.Api.Modules.Orders.Infrastructure;
 using PaginaVentasNet.Api.Modules.Orders.Application.UseCases;
+using PaginaVentasNet.Api.Modules.Payments.Application.Ports;
+using PaginaVentasNet.Api.Modules.Payments.Infrastructure;
+using PaginaVentasNet.Api.Modules.Payments.Application.UseCases;
 
 Env.Load(".env");
 
@@ -177,6 +180,11 @@ builder.Services.AddScoped<CreateOrderUseCase>();
 builder.Services.AddScoped<GetOrdersUseCase>();
 builder.Services.AddScoped<CancelOrderUseCase>();
 builder.Services.AddScoped<UpdateOrderStatusUseCase>();
+
+// Payments
+builder.Services.AddScoped<IPaymentService, WompiService>();
+builder.Services.AddScoped<ProcessWebhookUseCase>();
+builder.Services.AddScoped<GetPaymentInfoUseCase>();
 
 
 // Pokemon Api de prueba

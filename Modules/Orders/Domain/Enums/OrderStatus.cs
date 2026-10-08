@@ -5,9 +5,8 @@ namespace PaginaVentasNet.Api.Modules.Orders.Domain.Enums;
 /// </summary>
 public enum OrderStatus
 {
-    Pendiente,
+    PendientePago,
     Confirmado,
     Enviado,
-    Entregado,
     Cancelado
 }
