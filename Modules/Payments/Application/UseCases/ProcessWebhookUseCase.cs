@@ -24,19 +24,21 @@ public class ProcessWebhookUseCase
     public async Task ExecuteAsync(WompiWebhookDto dto)
     {
         var webhookSecret = Environment.GetEnvironmentVariable("WOMPI_EVENTS_SECRET")!;
+        var transaction = dto.Data.Transaction;
 
         var isValid = _paymentService.ValidateWebhookSignature(
-            dto.Signature,
+            dto.Signature.Checksum,
             dto.Timestamp,
-            webhookSecret);
+            webhookSecret,
+            transaction.Id,
+            transaction.Status,
+            transaction.AmountInCents);
 
         if (!isValid)
             throw new UnauthorizedAccessException("Firma del webhook inválida.");
 
         if (dto.Event != "transaction.updated")
             return;
-
-        var transaction = dto.Data.Transaction;
 
         if (transaction.Status != "APPROVED")
             return;
@@ -47,6 +49,9 @@ public class ProcessWebhookUseCase
         var order = await _orderRepository.GetEntityByIdAsync(orderId);
 
         if (order is null)
+            return;
+
+        if (order.Status != Orders.Domain.Enums.OrderStatus.PendientePago)
             return;
 
         order.ConfirmPayment();

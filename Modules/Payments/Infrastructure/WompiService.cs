@@ -9,9 +9,15 @@ namespace PaginaVentasNet.Api.Modules.Payments.Infrastructure;
 /// </summary>
 public class WompiService : IPaymentService
 {
-    public bool ValidateWebhookSignature(string checksum, long timestamp, string webhookSecret)
+    public bool ValidateWebhookSignature(
+        string checksum, 
+        long timestamp, 
+        string webhookSecret,
+        string transactionId,
+        string transactionStatus,
+        long amountInCents)
     {
-        var toSign = $"{timestamp}{webhookSecret}";
+        var toSign = $"{transactionId}{transactionStatus}{amountInCents}{timestamp}{webhookSecret}";
         var hash = ComputeSha256(toSign);
         return hash.Equals(checksum, StringComparison.OrdinalIgnoreCase);
     }
