@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.RateLimiting;
+using PaginaVentasNet.Api.Common.Exceptions;
 using PaginaVentasNet.Api.Common.Responses;
 using PaginaVentasNet.Api.Controllers;
 using PaginaVentasNet.Api.Modules.Identity.Application.Auth.Dtos;
@@ -28,9 +29,9 @@ public class AuthController : ApiController
             var response = await _loginUseCase.ExecuteAsync(dto);
             return Success(response);
         }
-        catch (UnauthorizedAccessException ex)
+        catch (AppException ex)
         {
-            return Failure<AuthResponseDto>("INVALID_CREDENTIALS", ex.Message, 401);
+            return Failure<AuthResponseDto>(ex.Code, ex.Message, ex.StatusCode);
         }
     }
 }

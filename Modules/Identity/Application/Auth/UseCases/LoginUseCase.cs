@@ -1,3 +1,4 @@
+using PaginaVentasNet.Api.Common.Exceptions;
 using PaginaVentasNet.Api.Modules.Identity.Application.Auth.Dtos;
 using PaginaVentasNet.Api.Modules.Identity.Application.Auth.Ports;
 
@@ -19,21 +20,23 @@ public class LoginUseCase
         var usuario = await _repository.GetByEmailAsync(dto.Email);
 
         if (usuario is null)
-            throw new UnauthorizedAccessException("Email o contraseña incorrectos.");
+            throw new AppException("INVALID_CREDENTIALS", 
+                "Email o contraseña incorrectos.", 401);
 
         if (!usuario.IsActive)
-            throw new UnauthorizedAccessException(
-            "Esta cuenta está desactivada. Contacta al soporte para reactivarla.");
+            throw new AppException("ACCOUNT_DISABLED", 
+                "Esta cuenta está desactivada. Contacta al soporte.", 401);
 
         if (string.IsNullOrEmpty(usuario.PasswordHash))
-            throw new UnauthorizedAccessException(
-                "Este usuario no tiene contraseña asignada. Usa el código OTP para ingresar.");
+            throw new AppException("NO_PASSWORD", 
+                "Este usuario no tiene contraseña asignada.", 401);
 
         var passwordValido = BCrypt.Net.BCrypt.Verify(dto.Password, usuario.PasswordHash);
 
         if (!passwordValido)
-            throw new UnauthorizedAccessException("Email o contraseña incorrectos.");
-
+            throw new AppException("INVALID_CREDENTIALS", 
+                "Email o contraseña incorrectos.", 401);
+                
         var token = _jwtService.GenerarToken(usuario);
         var expiracion = int.Parse(
             Environment.GetEnvironmentVariable("JWT_EXPIRATION_MINUTES") ?? "60");

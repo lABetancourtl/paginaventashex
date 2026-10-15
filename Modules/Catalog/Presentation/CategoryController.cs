@@ -10,7 +10,6 @@ namespace PaginaVentasNet.Api.Modules.Catalog.Presentation;
 /// <summary>
 /// Controlador para la gestión de categorías.
 /// </summary>
-[Authorize]
 [Route("api/categories")]
 public class CategoryController : ApiController
 {
