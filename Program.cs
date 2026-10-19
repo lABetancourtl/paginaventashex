@@ -136,7 +136,6 @@ builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 builder.Services.AddScoped<UploadProductMediaUseCase>();
 builder.Services.AddScoped<GetProductMediaUseCase>();
 builder.Services.AddScoped<DeleteProductMediaUseCase>();
-builder.Services.AddScoped<SetDisplayRoleUseCase>();
 builder.Services.AddScoped<ReorderMediaUseCase>();
 
 

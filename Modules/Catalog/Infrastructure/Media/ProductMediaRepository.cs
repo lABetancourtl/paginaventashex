@@ -80,7 +80,6 @@ public class ProductMediaRepository : IProductMediaRepository
                 Id = m.Id,
                 Url = m.Url,
                 MediaType = m.MediaType,
-                DisplayRole = m.DisplayRole,
                 DisplayOrder = m.DisplayOrder
             })
             .ToListAsync();
@@ -96,11 +95,5 @@ public class ProductMediaRepository : IProductMediaRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task<ProductMedia?> GetByRoleAsync(int productId, DisplayRole role)
-    {
-        return await _context.ProductMedia
-            .Where(m => m.ProductId == productId && m.DisplayRole == role)
-            .FirstOrDefaultAsync();
-    }
 
 }

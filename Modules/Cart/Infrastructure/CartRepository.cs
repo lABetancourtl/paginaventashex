@@ -36,7 +36,7 @@ public class CartRepository : ICartRepository
                     ProductId = i.ProductId,
                     ProductName = i.Product!.Name,
                     ProductImageUrl = i.Product.Media
-                        .Where(m => m.DisplayRole == DisplayRole.CatalogMain)
+                        .Where(m => m.MediaType == MediaType.Image && m.DisplayOrder == 1)
                         .Select(m => m.Url)
                         .FirstOrDefault(),
                     ProductPrice = i.Product.Price,

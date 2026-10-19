@@ -8,9 +8,7 @@ using PaginaVentasNet.Api.Modules.Catalog.Domain.Enums;
 namespace PaginaVentasNet.Api.Modules.Catalog.Application.Media.UseCases;
 
 /// <summary>
-/// Caso de uso para subir un archivo multimedia a un producto.
-/// Reglas: máximo 9 imágenes y 1 video por producto.
-/// Primera imagen → CatalogMain, segunda → CatalogHover, resto → None.
+/// Use case for uploading media (images or videos) for a product. This use case ensures that the product exists, validates the media type constraints (maximum number of images and single video), uploads the media to Cloudinary, and creates a media record in the repository with the appropriate display order.   
 /// </summary>
 public class UploadProductMediaUseCase
 {
@@ -29,6 +27,14 @@ public class UploadProductMediaUseCase
         _cloudinaryService = cloudinaryService;
     }
 
+    /// <summary>
+    /// Uploads a media file (image or video) for a specific product, ensuring that the product exists and that the media type constraints are respected (maximum number of images and single video). The media is uploaded to Cloudinary, and the media record is created in the repository with the appropriate display order.    
+    /// </summary>
+    /// <param name="productId"></param>
+    /// <param name="file"></param>
+    /// <param name="mediaType"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task<ProductMediaResponseDto> ExecuteAsync(
         int productId,
         IFormFile file,
@@ -59,22 +65,23 @@ public class UploadProductMediaUseCase
         var (url, publicId) = await _cloudinaryService.UploadAsync(file, mediaType);
 
         var existingMedia = await _mediaRepository.GetByProductIdAsync(productId);
-        var displayOrder = existingMedia.Count + 1;
 
-        var displayRole = DisplayRole.None;
-        if (mediaType == MediaType.Image)
+        int displayOrder;
+        if (mediaType == MediaType.Video)
+        {
+            displayOrder = existingMedia.Count + 1;
+        }
+        else
         {
             var imageCount = existingMedia.Count(m => m.MediaType == MediaType.Image);
-            displayRole = imageCount switch
-            {
-                0 => DisplayRole.CatalogMain,
-                1 => DisplayRole.CatalogHover,
-                _ => DisplayRole.None
-            };
+            displayOrder = imageCount + 1;
+
+            var video = existingMedia.FirstOrDefault(m => m.MediaType == MediaType.Video);
+            if (video is not null)
+                video.SetDisplayOrder(imageCount + 2);
         }
 
-        var media = ProductMedia.Create(
-            productId, url, publicId, mediaType, displayOrder, displayRole);
+        var media = ProductMedia.Create(productId, url, publicId, mediaType, displayOrder);
 
         await _mediaRepository.AddAsync(media);
         await _mediaRepository.SaveChangesAsync();
@@ -84,7 +91,6 @@ public class UploadProductMediaUseCase
             Id = media.Id,
             Url = media.Url,
             MediaType = media.MediaType,
-            DisplayRole = media.DisplayRole,
             DisplayOrder = media.DisplayOrder
         };
     }

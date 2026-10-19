@@ -177,12 +177,6 @@ namespace PaginaVentasNet.Api.Migrations
                     b.Property<int>("DisplayOrder")
                         .HasColumnType("integer");
 
-                    b.Property<string>("DisplayRole")
-                        .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("text")
-                        .HasDefaultValue("None");
-
                     b.Property<string>("MediaType")
                         .IsRequired()
                         .HasColumnType("text");

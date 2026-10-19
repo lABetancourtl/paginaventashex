@@ -29,11 +29,6 @@ public class ProductMediaConfiguration : IEntityTypeConfiguration<Domain.Product
         builder.Property(m => m.DisplayOrder)
             .IsRequired();
 
-        builder.Property(m => m.DisplayRole)
-            .IsRequired()
-            .HasConversion<string>()
-            .HasDefaultValue(DisplayRole.None);
-
         builder.HasOne<Product>()
             .WithMany(p => p.Media)
             .HasForeignKey(m => m.ProductId)

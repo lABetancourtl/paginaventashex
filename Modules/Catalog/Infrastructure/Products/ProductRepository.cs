@@ -71,11 +71,11 @@ public class ProductRepository : IProductRepository
                 CategoryId = p.CategoryId,
                 CategoryName = p.Category!.Name,
                 CatalogMainUrl = p.Media
-                    .Where(m => m.DisplayRole == DisplayRole.CatalogMain)
+                    .Where(m => m.MediaType == MediaType.Image && m.DisplayOrder == 1)
                     .Select(m => m.Url)
                     .FirstOrDefault(),
                 CatalogHoverUrl = p.Media
-                    .Where(m => m.DisplayRole == DisplayRole.CatalogHover)
+                    .Where(m => m.MediaType == MediaType.Image && m.DisplayOrder == 2)
                     .Select(m => m.Url)
                     .FirstOrDefault(),
                 Media = new List<ProductMediaResponseDto>(),
@@ -133,11 +133,11 @@ public class ProductRepository : IProductRepository
                 CategoryId = p.CategoryId,
                 CategoryName = p.Category!.Name,
                 CatalogMainUrl = p.Media
-                    .Where(m => m.DisplayRole == DisplayRole.CatalogMain)
+                    .Where(m => m.MediaType == MediaType.Image && m.DisplayOrder == 1)
                     .Select(m => m.Url)
                     .FirstOrDefault(),
                 CatalogHoverUrl = p.Media
-                    .Where(m => m.DisplayRole == DisplayRole.CatalogHover)
+                    .Where(m => m.MediaType == MediaType.Image && m.DisplayOrder == 2)
                     .Select(m => m.Url)
                     .FirstOrDefault(),
                 Media = p.Media
@@ -147,7 +147,6 @@ public class ProductRepository : IProductRepository
                         Id = m.Id,
                         Url = m.Url,
                         MediaType = m.MediaType,
-                        DisplayRole = m.DisplayRole,
                         DisplayOrder = m.DisplayOrder
                     })
                     .ToList(),
@@ -217,11 +216,11 @@ public class ProductRepository : IProductRepository
                 CategoryId = p.CategoryId,
                 CategoryName = p.Category!.Name,
                 CatalogMainUrl = p.Media
-                    .Where(m => m.DisplayRole == DisplayRole.CatalogMain)
+                    .Where(m => m.MediaType == MediaType.Image && m.DisplayOrder == 1)
                     .Select(m => m.Url)
                     .FirstOrDefault(),
                 CatalogHoverUrl = p.Media
-                    .Where(m => m.DisplayRole == DisplayRole.CatalogHover)
+                    .Where(m => m.MediaType == MediaType.Image && m.DisplayOrder == 2)
                     .Select(m => m.Url)
                     .FirstOrDefault(),
                 Media = new List<ProductMediaResponseDto>(),
@@ -237,6 +236,11 @@ public class ProductRepository : IProductRepository
         };
     }
 
+    /// <summary>
+    /// Busca productos según los criterios especificados en el DTO de búsqueda para administradores.   
+    /// </summary>
+    /// <param name="dto"></param>
+    /// <returns></returns>
     public async Task<PagedResultDto<ProductResponseDto>> AdminSearchAsync(AdminSearchProductsDto dto)
     {
         const int pageSize = 20;
@@ -279,11 +283,11 @@ public class ProductRepository : IProductRepository
                 CategoryId = p.CategoryId,
                 CategoryName = p.Category!.Name,
                 CatalogMainUrl = p.Media
-                    .Where(m => m.DisplayRole == DisplayRole.CatalogMain)
+                    .Where(m => m.MediaType == MediaType.Image && m.DisplayOrder == 1)
                     .Select(m => m.Url)
                     .FirstOrDefault(),
                 CatalogHoverUrl = p.Media
-                    .Where(m => m.DisplayRole == DisplayRole.CatalogHover)
+                    .Where(m => m.MediaType == MediaType.Image && m.DisplayOrder == 2)
                     .Select(m => m.Url)
                     .FirstOrDefault(),
                 Media = new List<ProductMediaResponseDto>(),

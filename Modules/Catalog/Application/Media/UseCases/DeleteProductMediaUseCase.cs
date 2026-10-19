@@ -1,4 +1,3 @@
-using System;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Media.Ports;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Products.Ports;
 using PaginaVentasNet.Api.Modules.Catalog.Domain.Enums;
@@ -6,7 +5,7 @@ using PaginaVentasNet.Api.Modules.Catalog.Domain.Enums;
 namespace PaginaVentasNet.Api.Modules.Catalog.Application.Media.UseCases;
 
 /// <summary>
-/// Caso de uso para eliminar un archivo multimedia de un producto dado su ID y el ID del archivo multimedia.   
+/// Use case for deleting a media file associated with a product. It also reorders the remaining media files of the same type after deletion.
 /// </summary>
 public class DeleteProductMediaUseCase
 {
@@ -24,6 +23,13 @@ public class DeleteProductMediaUseCase
         _cloudinaryService = cloudinaryService;
     }
 
+    /// <summary>
+    /// Deletes a media file associated with a product and reorders the remaining media files of the same type. 
+    /// </summary>
+    /// <param name="productId"></param>
+    /// <param name="mediaId"></param>
+    /// <returns></returns>
+    /// <exception cref="InvalidOperationException"></exception>
     public async Task<bool> DeleteAsync(int productId, int mediaId)
     {
         var product = await _productRepository.GetEntityByIdAsync(productId);
@@ -38,22 +44,25 @@ public class DeleteProductMediaUseCase
             throw new InvalidOperationException(
                 $"No existe un archivo multimedia con Id '{mediaId}' para el producto con Id '{productId}'.");
 
-        var deletedRole = media.DisplayRole;
+        var deletedOrder = media.DisplayOrder;
+        var deletedType = media.MediaType;
 
         await _cloudinaryService.DeleteAsync(media.PublicId);
         await _mediaRepository.RemoveAsync(media);
         await _mediaRepository.SaveChangesAsync();
 
-        // Si era CatalogMain o CatalogHover, reasigna al siguiente disponible
-        if (deletedRole == DisplayRole.CatalogMain || deletedRole == DisplayRole.CatalogHover)
-        {
-            var nextImage = await _mediaRepository.GetNextImageAsync(productId, mediaId);
-            if (nextImage is not null)
-            {
-                nextImage.SetDisplayRole(deletedRole);
-                await _mediaRepository.SaveChangesAsync();
-            }
-        }
+
+        var remaining = await _mediaRepository.GetByProductIdAsync(productId);
+        var toReorder = remaining
+            .Where(m => m.MediaType == deletedType && m.DisplayOrder > deletedOrder)
+            .OrderBy(m => m.DisplayOrder)
+            .ToList();
+
+        foreach (var item in toReorder)
+            item.SetDisplayOrder(item.DisplayOrder - 1);
+
+        if (toReorder.Any())
+            await _mediaRepository.SaveChangesAsync();
 
         return true;
     }

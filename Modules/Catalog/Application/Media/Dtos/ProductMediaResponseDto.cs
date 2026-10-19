@@ -11,5 +11,4 @@ public class ProductMediaResponseDto
     public string Url { get; set; } = string.Empty;
     public MediaType MediaType { get; set; }
     public int DisplayOrder { get; set; }
-    public DisplayRole DisplayRole { get; set; }
 }
