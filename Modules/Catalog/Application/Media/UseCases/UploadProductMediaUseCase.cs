@@ -10,6 +10,7 @@ namespace PaginaVentasNet.Api.Modules.Catalog.Application.Media.UseCases;
 /// <summary>
 /// Caso de uso para subir un archivo multimedia a un producto.
 /// Reglas: máximo 9 imágenes y 1 video por producto.
+/// Primera imagen → CatalogMain, segunda → CatalogHover, resto → None.
 /// </summary>
 public class UploadProductMediaUseCase
 {
@@ -31,7 +32,7 @@ public class UploadProductMediaUseCase
     public async Task<ProductMediaResponseDto> ExecuteAsync(
         int productId,
         IFormFile file,
-        MediaType mediaType) 
+        MediaType mediaType)
     {
         var product = await _productRepository.GetEntityByIdAsync(productId);
 
@@ -60,11 +61,20 @@ public class UploadProductMediaUseCase
         var existingMedia = await _mediaRepository.GetByProductIdAsync(productId);
         var displayOrder = existingMedia.Count + 1;
 
-        var isMain = mediaType == MediaType.Image && 
-                    !existingMedia.Any(m => m.MediaType == MediaType.Image);
+        var displayRole = DisplayRole.None;
+        if (mediaType == MediaType.Image)
+        {
+            var imageCount = existingMedia.Count(m => m.MediaType == MediaType.Image);
+            displayRole = imageCount switch
+            {
+                0 => DisplayRole.CatalogMain,
+                1 => DisplayRole.CatalogHover,
+                _ => DisplayRole.None
+            };
+        }
 
         var media = ProductMedia.Create(
-            productId, url, publicId, mediaType, displayOrder, isMain);
+            productId, url, publicId, mediaType, displayOrder, displayRole);
 
         await _mediaRepository.AddAsync(media);
         await _mediaRepository.SaveChangesAsync();
@@ -74,44 +84,8 @@ public class UploadProductMediaUseCase
             Id = media.Id,
             Url = media.Url,
             MediaType = media.MediaType,
-            DisplayOrder = media.DisplayOrder,
-            IsMain = media.IsMain
+            DisplayRole = media.DisplayRole,
+            DisplayOrder = media.DisplayOrder
         };
-    }
-
-    public async Task<bool> SetAsMainAsync(int productId, int mediaId)
-    {
-        var product = await _productRepository.GetEntityByIdAsync(productId);
-
-        if (product is null)
-            throw new InvalidOperationException(
-                $"No existe un producto con Id '{productId}'.");
-
-        var media = await _mediaRepository.GetByIdAsync(mediaId);
-
-        if (media is null || media.ProductId != productId)
-            throw new InvalidOperationException(
-                $"No existe un archivo multimedia con Id '{mediaId}' para el producto con Id '{productId}'.");
-
-        if (media.MediaType != MediaType.Image)
-            throw new ArgumentException(
-                "Solo se pueden establecer como principal archivos de tipo imagen.");
-
-        if (media.IsMain)
-            throw new ArgumentException(
-                "El archivo multimedia ya es la imagen principal.");
-
-        var currentMain = await _mediaRepository.GetIsMainAsync(productId);
-
-        if (currentMain is not null)
-        {
-            currentMain.RemoveFromMain();
-        }
-        media.SetAsMain(); 
-
-
-        await _mediaRepository.SaveChangesAsync();
-        return true;
-  
     }
 }

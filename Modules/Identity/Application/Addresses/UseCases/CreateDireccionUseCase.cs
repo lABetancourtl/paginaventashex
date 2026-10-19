@@ -11,10 +11,14 @@ namespace PaginaVentasNet.Api.Modules.Identity.Application.Addresses.UseCases;
 public class CreateDireccionUseCase
 {
     private readonly IDireccionRepository _repository;
+    private readonly IGeographyValidator _geographyValidator;
 
-    public CreateDireccionUseCase(IDireccionRepository repository)
+    public CreateDireccionUseCase(
+        IDireccionRepository repository,
+        IGeographyValidator geographyValidator)
     {
         _repository = repository;
+        _geographyValidator = geographyValidator;
     }
 
     /// <summary>
@@ -25,6 +29,13 @@ public class CreateDireccionUseCase
     /// <returns></returns>
     public async Task<int> ExecuteAsync(int usuarioId, CreateDireccionDto dto)
     {
+        var municipioValido = await _geographyValidator
+            .MunicipioPerteneceAlDepartamentoAsync(dto.MunicipioCodigo, dto.DepartamentoCodigo);
+
+        if (!municipioValido)
+            throw new ArgumentException(
+                "El municipio no pertenece al departamento seleccionado.");
+
         var direcciones = await _repository.GetByUsuarioIdAsync(usuarioId);
         var esPrincipal = direcciones.Count == 0;
 

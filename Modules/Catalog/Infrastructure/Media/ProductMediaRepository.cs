@@ -80,8 +80,8 @@ public class ProductMediaRepository : IProductMediaRepository
                 Id = m.Id,
                 Url = m.Url,
                 MediaType = m.MediaType,
-                DisplayOrder = m.DisplayOrder,
-                IsMain = m.IsMain
+                DisplayRole = m.DisplayRole,
+                DisplayOrder = m.DisplayOrder
             })
             .ToListAsync();
     }
@@ -89,17 +89,17 @@ public class ProductMediaRepository : IProductMediaRepository
     public async Task<ProductMedia?> GetNextImageAsync(int productId, int excludeMediaId)
     {
         return await _context.ProductMedia
-            .Where(m => m.ProductId == productId 
-                    && m.Id != excludeMediaId 
+            .Where(m => m.ProductId == productId
+                    && m.Id != excludeMediaId
                     && m.MediaType == MediaType.Image)
             .OrderBy(m => m.DisplayOrder)
             .FirstOrDefaultAsync();
     }
 
-    public async Task<ProductMedia?> GetIsMainAsync(int productId)
+    public async Task<ProductMedia?> GetByRoleAsync(int productId, DisplayRole role)
     {
         return await _context.ProductMedia
-            .Where(m => m.ProductId == productId && m.IsMain)
+            .Where(m => m.ProductId == productId && m.DisplayRole == role)
             .FirstOrDefaultAsync();
     }
 

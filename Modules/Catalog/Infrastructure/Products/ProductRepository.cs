@@ -4,6 +4,7 @@ using PaginaVentasNet.Api.Modules.Catalog.Application.Media.Dtos;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Products.Dtos;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Products.Ports;
 using PaginaVentasNet.Api.Modules.Catalog.Domain;
+using PaginaVentasNet.Api.Modules.Catalog.Domain.Enums;
 
 namespace PaginaVentasNet.Api.Modules.Catalog.Infrastructure.Products;
 
@@ -69,8 +70,12 @@ public class ProductRepository : IProductRepository
                 IsActive = p.IsActive,
                 CategoryId = p.CategoryId,
                 CategoryName = p.Category!.Name,
-                MainImageUrl = p.Media
-                    .Where(m => m.IsMain)
+                CatalogMainUrl = p.Media
+                    .Where(m => m.DisplayRole == DisplayRole.CatalogMain)
+                    .Select(m => m.Url)
+                    .FirstOrDefault(),
+                CatalogHoverUrl = p.Media
+                    .Where(m => m.DisplayRole == DisplayRole.CatalogHover)
                     .Select(m => m.Url)
                     .FirstOrDefault(),
                 Media = new List<ProductMediaResponseDto>(),
@@ -127,8 +132,12 @@ public class ProductRepository : IProductRepository
                 IsActive = p.IsActive,
                 CategoryId = p.CategoryId,
                 CategoryName = p.Category!.Name,
-                MainImageUrl = p.Media
-                    .Where(m => m.IsMain)
+                CatalogMainUrl = p.Media
+                    .Where(m => m.DisplayRole == DisplayRole.CatalogMain)
+                    .Select(m => m.Url)
+                    .FirstOrDefault(),
+                CatalogHoverUrl = p.Media
+                    .Where(m => m.DisplayRole == DisplayRole.CatalogHover)
                     .Select(m => m.Url)
                     .FirstOrDefault(),
                 Media = p.Media
@@ -138,8 +147,8 @@ public class ProductRepository : IProductRepository
                         Id = m.Id,
                         Url = m.Url,
                         MediaType = m.MediaType,
-                        DisplayOrder = m.DisplayOrder,
-                        IsMain = m.IsMain
+                        DisplayRole = m.DisplayRole,
+                        DisplayOrder = m.DisplayOrder
                     })
                     .ToList(),
                 CreatedAtUtc = p.CreatedAtUtc
@@ -207,8 +216,12 @@ public class ProductRepository : IProductRepository
                 IsActive = p.IsActive,
                 CategoryId = p.CategoryId,
                 CategoryName = p.Category!.Name,
-                MainImageUrl = p.Media
-                    .Where(m => m.IsMain)
+                CatalogMainUrl = p.Media
+                    .Where(m => m.DisplayRole == DisplayRole.CatalogMain)
+                    .Select(m => m.Url)
+                    .FirstOrDefault(),
+                CatalogHoverUrl = p.Media
+                    .Where(m => m.DisplayRole == DisplayRole.CatalogHover)
                     .Select(m => m.Url)
                     .FirstOrDefault(),
                 Media = new List<ProductMediaResponseDto>(),
@@ -265,8 +278,12 @@ public class ProductRepository : IProductRepository
                 IsActive = p.IsActive,
                 CategoryId = p.CategoryId,
                 CategoryName = p.Category!.Name,
-                MainImageUrl = p.Media
-                    .Where(m => m.IsMain)
+                CatalogMainUrl = p.Media
+                    .Where(m => m.DisplayRole == DisplayRole.CatalogMain)
+                    .Select(m => m.Url)
+                    .FirstOrDefault(),
+                CatalogHoverUrl = p.Media
+                    .Where(m => m.DisplayRole == DisplayRole.CatalogHover)
                     .Select(m => m.Url)
                     .FirstOrDefault(),
                 Media = new List<ProductMediaResponseDto>(),

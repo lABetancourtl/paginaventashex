@@ -18,15 +18,21 @@ public class ProductMediaController : ApiController
     private readonly UploadProductMediaUseCase _uploadMediaUseCase;
     private readonly GetProductMediaUseCase _getProductMediaUseCase;
     private readonly DeleteProductMediaUseCase _deleteProductMediaUseCase;
+    private readonly SetDisplayRoleUseCase _setDisplayRoleUseCase;
+    private readonly ReorderMediaUseCase _reorderMediaUseCase;
 
     public ProductMediaController(
         UploadProductMediaUseCase uploadMediaUseCase,
         GetProductMediaUseCase getProductMediaUseCase,
-        DeleteProductMediaUseCase deleteProductMediaUseCase)
+        DeleteProductMediaUseCase deleteProductMediaUseCase,
+        SetDisplayRoleUseCase setDisplayRoleUseCase,
+        ReorderMediaUseCase reorderMediaUseCase)
     {
         _uploadMediaUseCase = uploadMediaUseCase;
         _getProductMediaUseCase = getProductMediaUseCase;
         _deleteProductMediaUseCase = deleteProductMediaUseCase;
+        _setDisplayRoleUseCase = setDisplayRoleUseCase;
+        _reorderMediaUseCase = reorderMediaUseCase;
     }
 
     /// <summary>
@@ -125,15 +131,16 @@ public class ProductMediaController : ApiController
     /// <param name="productId">Id del producto.</param>
     /// <param name="mediaId">Id del archivo multimedia.</param>
     /// <returns></returns>
-    [HttpPatch("{mediaId}/main")]
+    [HttpPatch("{mediaId}/role")]
     [Authorize(Roles = "Admin")]
-    public async Task<ActionResult<ApiResponse<bool>>> SetAsMain(
+    public async Task<ActionResult<ApiResponse<bool>>> SetDisplayRole(
         int productId,
-        int mediaId)
+        int mediaId,
+        [FromBody] SetDisplayRoleDto dto)
     {
         try
         {
-            var result = await _uploadMediaUseCase.SetAsMainAsync(productId, mediaId);
+            var result = await _setDisplayRoleUseCase.ExecuteAsync(productId, mediaId, dto);
             return Success(result);
         }
         catch (InvalidOperationException ex)
@@ -143,6 +150,26 @@ public class ProductMediaController : ApiController
         catch (ArgumentException ex)
         {
             return Failure<bool>("MEDIA_INVALID", ex.Message, 400);
+        }
+    }
+
+    /// <summary>
+    /// Reordena los archivos multimedia de un producto.
+    /// </summary>
+    [HttpPatch("reorder")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<ApiResponse<bool>>> Reorder(
+        int productId,
+        [FromBody] ReorderMediaDto dto)
+    {
+        try
+        {
+            await _reorderMediaUseCase.ExecuteAsync(productId, dto);
+            return Success(true);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Failure<bool>("MEDIA_NOT_FOUND", ex.Message, 404);
         }
     }
 

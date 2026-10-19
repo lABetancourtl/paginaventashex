@@ -19,17 +19,20 @@ public class AddressController : ApiController
     private readonly GetDireccionesUseCase _getUseCase;
     private readonly DeleteDireccionUseCase _deleteUseCase;
     private readonly SetDireccionPrincipalUseCase _setPrincipalUseCase;
+    private readonly UpdateDireccionUseCase _updateUseCase;
 
     public AddressController(
         CreateDireccionUseCase createUseCase,
         GetDireccionesUseCase getUseCase,
         DeleteDireccionUseCase deleteUseCase,
-        SetDireccionPrincipalUseCase setPrincipalUseCase)
+        SetDireccionPrincipalUseCase setPrincipalUseCase,
+        UpdateDireccionUseCase updateUseCase)
     {
         _createUseCase = createUseCase;
         _getUseCase = getUseCase;
         _deleteUseCase = deleteUseCase;
         _setPrincipalUseCase = setPrincipalUseCase;
+        _updateUseCase = updateUseCase;
     }
 
     /// <summary>
@@ -59,6 +62,10 @@ public class AddressController : ApiController
         catch (ArgumentException ex)
         {
             return Failure<int>("ADDRESS_VALIDATION", ex.Message, 400);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Failure<int>("ADDRESS_ERROR", ex.Message, 400);
         }
     }
 
@@ -103,6 +110,29 @@ public class AddressController : ApiController
         }
     }
 
+
+    /// <summary>
+    /// Actualiza una dirección existente del usuario autenticado.
+    /// </summary>
+    [HttpPut("{id}")]
+    public async Task<ActionResult<ApiResponse<bool>>> Update(int id, UpdateDireccionDto dto)
+    {
+        try
+        {
+            var usuarioId = GetUsuarioId();
+            await _updateUseCase.ExecuteAsync(usuarioId, id, dto);
+            return Success(true);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Failure<bool>("ADDRESS_NOT_FOUND", ex.Message, 404);
+        }
+        catch (ArgumentException ex)
+        {
+            return Failure<bool>("ADDRESS_VALIDATION", ex.Message, 400);
+        }
+    }
+
     private int GetUsuarioId()
     {
         var claim = User.FindFirst(ClaimTypes.NameIdentifier)
@@ -113,4 +143,6 @@ public class AddressController : ApiController
 
         return int.Parse(claim.Value);
     }
+
+    
 }

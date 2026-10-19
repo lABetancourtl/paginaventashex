@@ -136,6 +136,8 @@ builder.Services.AddScoped<ICloudinaryService, CloudinaryService>();
 builder.Services.AddScoped<UploadProductMediaUseCase>();
 builder.Services.AddScoped<GetProductMediaUseCase>();
 builder.Services.AddScoped<DeleteProductMediaUseCase>();
+builder.Services.AddScoped<SetDisplayRoleUseCase>();
+builder.Services.AddScoped<ReorderMediaUseCase>();
 
 
 // Otp
@@ -158,6 +160,7 @@ builder.Services.AddScoped<IDepartamentoRepository, DepartamentoRepository>();
 builder.Services.AddScoped<IMunicipioRepository, MunicipioRepository>();
 builder.Services.AddScoped<GetDepartamentosUseCase>();
 builder.Services.AddScoped<GetMunicipiosByDepartamentoUseCase>();
+builder.Services.AddScoped<IGeographyValidator, GeographyValidator>();
 
 // Addresses
 builder.Services.AddScoped<IDireccionRepository, DireccionRepository>();
@@ -165,6 +168,7 @@ builder.Services.AddScoped<CreateDireccionUseCase>();
 builder.Services.AddScoped<GetDireccionesUseCase>();
 builder.Services.AddScoped<DeleteDireccionUseCase>();
 builder.Services.AddScoped<SetDireccionPrincipalUseCase>();
+builder.Services.AddScoped<UpdateDireccionUseCase>();
 
 // Cart
 builder.Services.AddScoped<ICartRepository, CartRepository>();

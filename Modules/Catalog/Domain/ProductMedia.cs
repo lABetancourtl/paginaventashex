@@ -12,8 +12,8 @@ public class ProductMedia
     public string Url { get; private set; } = string.Empty;
     public string PublicId { get; private set; } = string.Empty;
     public MediaType MediaType { get; private set; }
+    public DisplayRole DisplayRole { get; private set; }
     public int DisplayOrder { get; private set; }
-    public bool IsMain { get; private set; }
     public DateTime CreatedAtUtc { get; private set; }
 
     private ProductMedia() { }
@@ -24,7 +24,7 @@ public class ProductMedia
         string publicId,
         MediaType mediaType,
         int displayOrder,
-        bool isMain = false)
+        DisplayRole displayRole = DisplayRole.None)
     {
         if (string.IsNullOrWhiteSpace(url))
             throw new ArgumentException("La URL del archivo es obligatoria.");
@@ -39,18 +39,20 @@ public class ProductMedia
             PublicId = publicId,
             MediaType = mediaType,
             DisplayOrder = displayOrder,
-            IsMain = isMain,
+            DisplayRole = displayRole,
             CreatedAtUtc = DateTime.UtcNow
         };
     }
 
-    public void SetAsMain()
+    public void SetDisplayRole(DisplayRole role)
     {
-        IsMain = true;
+        DisplayRole = role;
     }
 
-    public void RemoveFromMain()
+    public void SetDisplayOrder(int order)
     {
-        IsMain = false;
+        if (order < 1)
+            throw new ArgumentException("El orden debe ser mayor a cero.");
+        DisplayOrder = order;
     }
 }

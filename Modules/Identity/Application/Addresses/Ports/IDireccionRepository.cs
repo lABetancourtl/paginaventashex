@@ -16,4 +16,7 @@ public interface IDireccionRepository
     Task SaveChangesAsync();
     Task<string> GetDepartamentoNombreAsync(int departamentoCodigo);
     Task<string> GetMunicipioNombreAsync(int municipioCodigo);
+    Task<IDisposable> BeginTransactionAsync();
+    Task CommitTransactionAsync();
+    Task DetachAsync(Direccion direccion);
 }

@@ -1,5 +1,6 @@
 using PaginaVentasNet.Api.Modules.Catalog.Application.Media.Dtos;
 using PaginaVentasNet.Api.Modules.Catalog.Domain;
+using PaginaVentasNet.Api.Modules.Catalog.Domain.Enums;
 
 namespace PaginaVentasNet.Api.Modules.Catalog.Application.Media.Ports;
 
@@ -17,5 +18,6 @@ public interface IProductMediaRepository
     Task<bool> HasVideoAsync(int productId);
     Task SaveChangesAsync();
     Task<ProductMedia?> GetNextImageAsync(int productId, int excludeMediaId);
-    Task<ProductMedia?> GetIsMainAsync(int productId);
+    Task<ProductMedia?> GetByRoleAsync(int productId, DisplayRole role);
+
 }

@@ -22,6 +22,8 @@ public class SetDireccionPrincipalUseCase
     /// <returns></returns>
     public async Task ExecuteAsync(int usuarioId, int direccionId)
     {
+        using var transaction = await _repository.BeginTransactionAsync();
+
         var nuevaPrincipal = await _repository.GetEntityByIdAsync(direccionId);
 
         if (nuevaPrincipal is null || nuevaPrincipal.UsuarioId != usuarioId)
@@ -34,10 +36,15 @@ public class SetDireccionPrincipalUseCase
         var actualPrincipal = await _repository.GetPrincipalByUsuarioIdAsync(usuarioId);
 
         if (actualPrincipal is not null)
+        {
             actualPrincipal.RemoveAsPrincipal();
+            await _repository.SaveChangesAsync();
+            await _repository.DetachAsync(actualPrincipal);
+        }
 
         nuevaPrincipal.SetAsPrincipal();
-
         await _repository.SaveChangesAsync();
+
+        await _repository.CommitTransactionAsync();
     }
 }

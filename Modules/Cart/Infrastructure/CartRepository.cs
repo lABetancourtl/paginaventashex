@@ -3,6 +3,7 @@ using PaginaVentasNet.Api.Data;
 using PaginaVentasNet.Api.Modules.Cart.Application.Dtos;
 using PaginaVentasNet.Api.Modules.Cart.Application.Ports;
 using PaginaVentasNet.Api.Modules.Cart.Domain;
+using PaginaVentasNet.Api.Modules.Catalog.Domain.Enums;
 
 namespace PaginaVentasNet.Api.Modules.Cart.Infrastructure;
 
@@ -35,7 +36,7 @@ public class CartRepository : ICartRepository
                     ProductId = i.ProductId,
                     ProductName = i.Product!.Name,
                     ProductImageUrl = i.Product.Media
-                        .Where(m => m.IsMain)
+                        .Where(m => m.DisplayRole == DisplayRole.CatalogMain)
                         .Select(m => m.Url)
                         .FirstOrDefault(),
                     ProductPrice = i.Product.Price,

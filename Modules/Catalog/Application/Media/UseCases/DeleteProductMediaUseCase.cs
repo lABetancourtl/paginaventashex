@@ -38,17 +38,23 @@ public class DeleteProductMediaUseCase
             throw new InvalidOperationException(
                 $"No existe un archivo multimedia con Id '{mediaId}' para el producto con Id '{productId}'.");
 
-        if (media.IsMain && media.MediaType == MediaType.Image)
-        {
-            var nextImage = await _mediaRepository.GetNextImageAsync(productId, mediaId);
-            if (nextImage is not null)
-                nextImage.SetAsMain();
-        }
+        var deletedRole = media.DisplayRole;
 
         await _cloudinaryService.DeleteAsync(media.PublicId);
         await _mediaRepository.RemoveAsync(media);
-
         await _mediaRepository.SaveChangesAsync();
+
+        // Si era CatalogMain o CatalogHover, reasigna al siguiente disponible
+        if (deletedRole == DisplayRole.CatalogMain || deletedRole == DisplayRole.CatalogHover)
+        {
+            var nextImage = await _mediaRepository.GetNextImageAsync(productId, mediaId);
+            if (nextImage is not null)
+            {
+                nextImage.SetDisplayRole(deletedRole);
+                await _mediaRepository.SaveChangesAsync();
+            }
+        }
+
         return true;
     }
 }

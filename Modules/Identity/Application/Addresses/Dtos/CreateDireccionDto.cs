@@ -7,10 +7,10 @@ namespace PaginaVentasNet.Api.Modules.Identity.Application.Addresses.Dtos;
 /// </summary>
 public class CreateDireccionDto
 {
-    [Required(ErrorMessage = "El código del departamento es obligatorio.")]
+    [Range(1, int.MaxValue, ErrorMessage = "El código del departamento es obligatorio.")]
     public int DepartamentoCodigo { get; set; }
 
-    [Required(ErrorMessage = "El código del municipio es obligatorio.")]
+    [Range(1, int.MaxValue, ErrorMessage = "El código del municipio es obligatorio.")]
     public int MunicipioCodigo { get; set; }
 
     [Required(ErrorMessage = "La dirección es obligatoria.")]

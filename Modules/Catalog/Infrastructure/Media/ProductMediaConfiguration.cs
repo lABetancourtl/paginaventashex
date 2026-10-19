@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using PaginaVentasNet.Api.Modules.Catalog.Domain;
+using PaginaVentasNet.Api.Modules.Catalog.Domain.Enums;
 
 namespace PaginaVentasNet.Api.Modules.Catalog.Infrastructure.Products;
 
@@ -28,8 +29,10 @@ public class ProductMediaConfiguration : IEntityTypeConfiguration<Domain.Product
         builder.Property(m => m.DisplayOrder)
             .IsRequired();
 
-        builder.Property(m => m.IsMain)
-            .HasDefaultValue(false);
+        builder.Property(m => m.DisplayRole)
+            .IsRequired()
+            .HasConversion<string>()
+            .HasDefaultValue(DisplayRole.None);
 
         builder.HasOne<Product>()
             .WithMany(p => p.Media)

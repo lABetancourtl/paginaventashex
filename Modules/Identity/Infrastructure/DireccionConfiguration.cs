@@ -40,6 +40,10 @@ public class DireccionConfiguration : IEntityTypeConfiguration<Direccion>
         builder.HasOne(d => d.Municipio)
             .WithMany()
             .HasForeignKey(d => d.MunicipioCodigo)
-            .OnDelete(DeleteBehavior.Restrict);           
+            .OnDelete(DeleteBehavior.Restrict);    
+
+        builder.HasIndex(d => d.UsuarioId)
+            .IsUnique()
+            .HasFilter("\"EsPrincipal\" = true");       
     }
 }

@@ -177,10 +177,11 @@ namespace PaginaVentasNet.Api.Migrations
                     b.Property<int>("DisplayOrder")
                         .HasColumnType("integer");
 
-                    b.Property<bool>("IsMain")
+                    b.Property<string>("DisplayRole")
+                        .IsRequired()
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false);
+                        .HasColumnType("text")
+                        .HasDefaultValue("None");
 
                     b.Property<string>("MediaType")
                         .IsRequired()
@@ -290,7 +291,9 @@ namespace PaginaVentasNet.Api.Migrations
 
                     b.HasIndex("MunicipioCodigo");
 
-                    b.HasIndex("UsuarioId");
+                    b.HasIndex("UsuarioId")
+                        .IsUnique()
+                        .HasFilter("\"EsPrincipal\" = true");
 
                     b.ToTable("Direcciones");
                 });

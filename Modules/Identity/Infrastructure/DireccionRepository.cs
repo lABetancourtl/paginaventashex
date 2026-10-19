@@ -9,6 +9,8 @@ namespace PaginaVentasNet.Api.Modules.Identity.Infrastructure;
 public class DireccionRepository : IDireccionRepository
 {
     private readonly AppDbContext _context;
+    private Microsoft.EntityFrameworkCore.Storage.IDbContextTransaction? _transaction;
+
 
     public DireccionRepository(AppDbContext context)
     {
@@ -52,8 +54,7 @@ public class DireccionRepository : IDireccionRepository
     public async Task<Direccion?> GetPrincipalByUsuarioIdAsync(int usuarioId)
     {
         return await _context.Direcciones
-            .Where(d => d.UsuarioId == usuarioId)
-            .OrderBy(d => d.CreadoEn)
+            .Where(d => d.UsuarioId == usuarioId && d.EsPrincipal)
             .FirstOrDefaultAsync();
     }
 
@@ -80,5 +81,23 @@ public class DireccionRepository : IDireccionRepository
         var municipio = await _context.Municipios
             .FirstOrDefaultAsync(m => m.Codigo == municipioCodigo);
         return municipio?.Nombre ?? string.Empty;
+    }   
+
+    public async Task<IDisposable> BeginTransactionAsync()
+    {
+        _transaction = await _context.Database.BeginTransactionAsync();
+        return _transaction;
+    }
+
+    public async Task CommitTransactionAsync()
+    {
+        if (_transaction is not null)
+            await _transaction.CommitAsync();
+    }
+
+    public Task DetachAsync(Direccion direccion)
+    {
+        _context.Entry(direccion).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
+        return Task.CompletedTask;
     }
 }

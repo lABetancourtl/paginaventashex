@@ -13,7 +13,8 @@ public class ProductResponseDto
     public bool IsActive { get; set; }
     public int CategoryId { get; set; }
     public string CategoryName { get; set; } = string.Empty;
-    public string? MainImageUrl { get; set; }              
+    public string? CatalogMainUrl { get; set; }
+    public string? CatalogHoverUrl { get; set; } 
     public List<ProductMediaResponseDto> Media { get; set; } = new();
     public DateTime CreatedAtUtc { get; set; }
 }
