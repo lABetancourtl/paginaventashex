@@ -141,6 +141,10 @@ public class ProductMediaController : ApiController
         {
             return Failure<bool>("MEDIA_NOT_FOUND", ex.Message, 404);
         }
+        catch (ArgumentException ex)
+        {
+            return Failure<bool>("MEDIA_INVALID", ex.Message, 400);
+        }
     }
 
 }

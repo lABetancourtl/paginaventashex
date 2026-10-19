@@ -1,12 +1,12 @@
 using PaginaVentasNet.Api.Modules.Catalog.Application.Media.Dtos;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Media.Ports;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Products.Ports;
+using PaginaVentasNet.Api.Modules.Catalog.Domain.Enums;
 
 namespace PaginaVentasNet.Api.Modules.Catalog.Application.Media.UseCases;
 
 /// <summary>
-/// Caso de uso para reordenar los archivos multimedia de un producto.
-/// El admin puede definir libremente el orden de visualización.
+/// Caso de uso para intercambiar el orden de una imagen con la que ocupa el orden destino.
 /// </summary>
 public class ReorderMediaUseCase
 {
@@ -29,17 +29,38 @@ public class ReorderMediaUseCase
             throw new InvalidOperationException(
                 $"No existe un producto con Id '{productId}'.");
 
-        foreach (var item in dto.Items)
+        var media = await _mediaRepository.GetByIdAsync(dto.MediaId);
+
+        if (media is null || media.ProductId != productId)
+            throw new InvalidOperationException(
+                $"No existe un archivo multimedia con Id '{dto.MediaId}' para este producto.");
+
+        if (media.MediaType == MediaType.Video)
+            throw new ArgumentException(
+                "No se puede reordenar el video. El video siempre queda al final.");
+
+        if (media.DisplayOrder == dto.NewDisplayOrder)
+            throw new ArgumentException(
+                "La imagen ya tiene ese orden.");
+
+        var allMedia = await _mediaRepository.GetByProductIdAsync(productId);
+        var displaced = allMedia.FirstOrDefault(m =>
+            m.Id != dto.MediaId &&
+            m.DisplayOrder == dto.NewDisplayOrder &&
+            m.MediaType == MediaType.Image);
+
+        var originalOrder = media.DisplayOrder;
+
+        media.SetDisplayOrder(9999);
+        await _mediaRepository.SaveChangesAsync();
+
+        if (displaced is not null)
         {
-            var media = await _mediaRepository.GetByIdAsync(item.MediaId);
-
-            if (media is null || media.ProductId != productId)
-                throw new InvalidOperationException(
-                    $"No existe un archivo multimedia con Id '{item.MediaId}' para este producto.");
-
-            media.SetDisplayOrder(item.DisplayOrder);
+            displaced.SetDisplayOrder(originalOrder);
+            await _mediaRepository.SaveChangesAsync();
         }
 
+        media.SetDisplayOrder(dto.NewDisplayOrder);
         await _mediaRepository.SaveChangesAsync();
     }
 }
