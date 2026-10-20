@@ -34,5 +34,13 @@ public class ProductConfiguration : IEntityTypeConfiguration<Product>
             .WithMany()
             .HasForeignKey(p => p.CategoryId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        builder.Property(p => p.DiscountPercent);
+
+        builder.Ignore(p => p.FinalPrice);
+
+        builder.ToTable(t => t.HasCheckConstraint(
+            "CK_Products_DiscountPercent",
+            "\"DiscountPercent\" IS NULL OR (\"DiscountPercent\" BETWEEN 1 AND 99)"));
     }
 }

@@ -15,6 +15,10 @@ public class Product
     public Category? Category { get; private set; }
     public DateTime CreatedAtUtc { get; private set; }
     public ICollection<ProductMedia> Media { get; private set; } = new List<ProductMedia>();
+    public int? DiscountPercent { get; private set; }
+
+    /// <summary>Precio que realmente paga el cliente. Se calcula, no se guarda.</summary>/// <summary>Precio que realmente paga el cliente. Se calcula, no se guarda.</summary>
+    public decimal FinalPrice => PriceCalculator.Final(Price, DiscountPercent);
 
     private Product() { }
 
@@ -88,5 +92,21 @@ public class Product
     public void RestoreStock(int quantity)
     {
         Stock += quantity;
+    }
+
+    public void ApplyDiscount(int percent)
+    {
+        if (percent < 1 || percent > 99)
+            throw new ArgumentException("El descuento debe estar entre 1 y 99.");
+
+        DiscountPercent = percent;
+    }
+
+    public void RemoveDiscount()
+    {
+        if (DiscountPercent is null)
+            throw new InvalidOperationException("El producto no tiene un descuento aplicado.");
+
+        DiscountPercent = null;
     }
 }

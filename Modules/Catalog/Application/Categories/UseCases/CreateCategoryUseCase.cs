@@ -28,6 +28,19 @@ public class CreateCategoryUseCase
         if (slugExiste)
             throw new InvalidOperationException($"Ya existe una categoría con el slug '{dto.Slug}'.");
 
+        if (dto.ParentCategoryId.HasValue)
+        {
+            var parent = await _repository.GetEntityByIdAsync(dto.ParentCategoryId.Value);
+
+            if (parent is null)
+                throw new ArgumentException(
+                    $"La categoría padre con Id '{dto.ParentCategoryId}' no existe.");
+
+            if (parent.ParentCategoryId is not null)
+                throw new ArgumentException(
+                    "Solo se permiten dos niveles: una subcategoría no puede tener hijos.");
+        }
+
         var category = Category.Create(dto.Name, dto.Slug, dto.ParentCategoryId);
 
         await _repository.AddAsync(category);

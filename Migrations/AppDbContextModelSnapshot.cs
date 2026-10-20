@@ -132,6 +132,9 @@ namespace PaginaVentasNet.Api.Migrations
                         .HasMaxLength(1000)
                         .HasColumnType("character varying(1000)");
 
+                    b.Property<int?>("DiscountPercent")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
@@ -160,7 +163,10 @@ namespace PaginaVentasNet.Api.Migrations
                     b.HasIndex("Sku")
                         .IsUnique();
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", t =>
+                        {
+                            t.HasCheckConstraint("CK_Products_DiscountPercent", "\"DiscountPercent\" IS NULL OR (\"DiscountPercent\" BETWEEN 1 AND 99)");
+                        });
                 });
 
             modelBuilder.Entity("PaginaVentasNet.Api.Modules.Catalog.Domain.ProductMedia", b =>
