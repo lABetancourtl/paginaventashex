@@ -160,4 +160,55 @@ public class ProductController : ApiController
         var result = await _searchProductsUseCase.ExecuteAsync(dto);
         return Success(result);
     }
+
+    /// <summary>
+    /// Aplica un descuento a un producto existente. Solo Admin.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="dto"></param>
+    /// <returns></returns>
+    [HttpPut("{id}/discount")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<ApiResponse<bool>>> ApplyDiscount(int id, ApplyDiscountDto dto)
+    {
+        try
+        {
+            var applied = await _updateProductUseCase.ApplyDiscountAsync(id, dto.DiscountPercent);
+
+            if (!applied)
+                return Failure<bool>("PRODUCT_NOT_FOUND",
+                    $"No se encontró el producto con Id {id}.", 404);
+
+            return Success(true);
+        }
+        catch (ArgumentException ex)
+        {
+            return Failure<bool>("DISCOUNT_VALIDATION", ex.Message, 400);
+        }
+    }
+
+    /// <summary>
+    /// Elimina el descuento aplicado a un producto existente. Solo Admin.
+    /// </summary>
+    /// <param name="id"></param>
+    /// <returns></returns>
+    [HttpDelete("{id}/discount")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<ApiResponse<bool>>> RemoveDiscount(int id)
+    {
+        try
+        {
+            var removed = await _updateProductUseCase.RemoveDiscountAsync(id);
+
+            if (!removed)
+                return Failure<bool>("PRODUCT_NOT_FOUND",
+                    $"No se encontró el producto con Id {id}.", 404);
+
+            return Success(true);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Failure<bool>("DISCOUNT_INVALID_STATE", ex.Message, 400);
+        }
+    }
 }

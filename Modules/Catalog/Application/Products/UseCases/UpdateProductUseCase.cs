@@ -75,4 +75,32 @@ public class UpdateProductUseCase
 
         return true;
     }
+
+    public async Task<bool> ApplyDiscountAsync(int id, int percent)
+    {
+        var product = await _productRepository.GetEntityByIdAsync(id);
+
+        if (product is null)
+            return false;
+
+        product.ApplyDiscount(percent);
+        await _productRepository.UpdateAsync(product);
+        await _productRepository.SaveChangesAsync();
+
+        return true;
+    }
+
+    public async Task<bool> RemoveDiscountAsync(int id)
+    {
+        var product = await _productRepository.GetEntityByIdAsync(id);
+
+        if (product is null)
+            return false;
+
+        product.RemoveDiscount();
+        await _productRepository.UpdateAsync(product);
+        await _productRepository.SaveChangesAsync();
+
+        return true;
+    }
 }
