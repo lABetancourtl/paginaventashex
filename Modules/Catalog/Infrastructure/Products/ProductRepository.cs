@@ -174,6 +174,17 @@ public class ProductRepository : IProductRepository
                 p.Category!.Name.ToLower().Contains(search));
         }
 
+        if (!string.IsNullOrWhiteSpace(dto.CategorySlug))
+        {
+            var slug = dto.CategorySlug.Trim().ToLower();
+            query = query.Where(p =>
+                p.Category!.Slug == slug ||
+                p.Category.ParentCategory!.Slug == slug);
+        }
+
+        if (dto.OnSale == true)
+            query = query.Where(p => p.DiscountPercent != null);
+
         var totalItems = await query.CountAsync();
 
         var items = await query

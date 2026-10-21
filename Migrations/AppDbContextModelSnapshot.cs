@@ -85,6 +85,9 @@ namespace PaginaVentasNet.Api.Migrations
                     b.Property<DateTime>("CreatedAtUtc")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("IsActive")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("boolean")
@@ -105,10 +108,10 @@ namespace PaginaVentasNet.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ParentCategoryId");
-
                     b.HasIndex("Slug")
                         .IsUnique();
+
+                    b.HasIndex("ParentCategoryId", "DisplayOrder");
 
                     b.ToTable("Categories");
                 });

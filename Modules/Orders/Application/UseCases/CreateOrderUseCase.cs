@@ -82,13 +82,13 @@ public class CreateOrderUseCase
                 order.Id,
                 product!.Id,
                 product.Name,
-                product.Price,
+                product.FinalPrice,
                 item.Quantity);
 
             order.Items.Add(orderItem);
 
             product.ReduceStock(item.Quantity);
-            total += product.Price * item.Quantity;
+            total += product.FinalPrice * item.Quantity;
         }
 
         order.SetTotal(total);

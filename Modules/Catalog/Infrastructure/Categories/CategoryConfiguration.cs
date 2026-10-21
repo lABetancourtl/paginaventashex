@@ -21,6 +21,11 @@ public class CategoryConfiguration : IEntityTypeConfiguration<Category>
         builder.HasIndex(c => c.Slug)
             .IsUnique();
 
+        builder.Property(c => c.DisplayOrder)
+            .IsRequired();
+
+        builder.HasIndex(c => new { c.ParentCategoryId, c.DisplayOrder });
+
         builder.Property(c => c.IsActive)
             .HasDefaultValue(true);
 

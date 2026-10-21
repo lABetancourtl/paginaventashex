@@ -154,6 +154,19 @@ public class CategoryRepository : ICategoryRepository
                 .Select(c => MapToTree(c, todas))
                 .ToList()
         };
-}
+    }
+
+    /// <summary>
+    /// Retorna el siguiente orden disponible entre las categorías hermanas
+    /// (mismo padre; si el padre es null, entre las raíces).
+    /// </summary>
+    public async Task<int> GetNextDisplayOrderAsync(int? parentCategoryId)
+    {
+        var maxOrder = await _context.Categories
+            .Where(c => c.ParentCategoryId == parentCategoryId)
+            .MaxAsync(c => (int?)c.DisplayOrder);
+
+        return (maxOrder ?? 0) + 1;
+    }
 
 }

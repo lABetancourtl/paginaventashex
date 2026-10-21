@@ -41,7 +41,8 @@ public class CreateCategoryUseCase
                     "Solo se permiten dos niveles: una subcategoría no puede tener hijos.");
         }
 
-        var category = Category.Create(dto.Name, dto.Slug, dto.ParentCategoryId);
+        var displayOrder = await _repository.GetNextDisplayOrderAsync(dto.ParentCategoryId);
+        var category = Category.Create(dto.Name, dto.Slug, dto.ParentCategoryId, displayOrder);
 
         await _repository.AddAsync(category);
         await _repository.SaveChangesAsync();

@@ -11,7 +11,6 @@ namespace PaginaVentasNet.Api.Modules.Catalog.Presentation;
 /// Controller para la gestión de productos del catálogo.
 /// Requiere autenticación JWT para todos los endpoints.
 /// </summary>
-[Authorize]
 [Route("api/products")]
 public class ProductController : ApiController
 {
