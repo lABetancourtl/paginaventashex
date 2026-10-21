@@ -1,3 +1,5 @@
+using PaginaVentasNet.Api.Modules.Catalog.Domain;
+
 namespace PaginaVentasNet.Api.Modules.Cart.Application.Dtos;
 
 public class CartResponseDto
@@ -14,6 +16,8 @@ public class CartItemResponseDto
     public string ProductName { get; set; } = string.Empty;
     public string? ProductImageUrl { get; set; }
     public decimal ProductPrice { get; set; }
+    public int? DiscountPercent { get; set; }
+    public decimal FinalPrice => PriceCalculator.Final(ProductPrice, DiscountPercent);
     public int Quantity { get; set; }
-    public decimal Subtotal => ProductPrice * Quantity;
+    public decimal Subtotal => FinalPrice * Quantity;
 }

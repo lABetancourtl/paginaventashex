@@ -40,6 +40,7 @@ public class CartRepository : ICartRepository
                         .Select(m => m.Url)
                         .FirstOrDefault(),
                     ProductPrice = i.Product.Price,
+                    DiscountPercent = i.Product.DiscountPercent,
                     Quantity = i.Quantity
                 }).ToList()
             })
