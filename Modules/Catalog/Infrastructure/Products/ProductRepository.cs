@@ -70,6 +70,7 @@ public class ProductRepository : IProductRepository
                 IsActive = p.IsActive,
                 CategoryId = p.CategoryId,
                 CategoryName = p.Category!.Name,
+                DiscountPercent = p.DiscountPercent,
                 CatalogMainUrl = p.Media
                     .Where(m => m.MediaType == MediaType.Image && m.DisplayOrder == 1)
                     .Select(m => m.Url)
@@ -79,32 +80,6 @@ public class ProductRepository : IProductRepository
                     .Select(m => m.Url)
                     .FirstOrDefault(),
                 Media = new List<ProductMediaResponseDto>(),
-                CreatedAtUtc = p.CreatedAtUtc
-            })
-            .ToListAsync();
-    }
-
-    /// <summary>
-    /// Obtiene todos los productos inactivos.
-    /// </summary>
-    /// <returns>Lista de productos.</returns>
-    public async Task<List<ProductResponseDto>> GetDeactiveAsync()
-    {
-        return await _context.Products
-            .Include(p => p.Category)
-            .Where(p => p.IsActive == false)
-            .OrderBy(p => p.Name)   
-            .Select(p => new ProductResponseDto
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Description = p.Description,
-                Price = p.Price,
-                Sku = p.Sku,
-                Stock = p.Stock,
-                IsActive = p.IsActive,
-                CategoryId = p.CategoryId,
-                CategoryName = p.Category!.Name,
                 CreatedAtUtc = p.CreatedAtUtc
             })
             .ToListAsync();
@@ -132,6 +107,7 @@ public class ProductRepository : IProductRepository
                 IsActive = p.IsActive,
                 CategoryId = p.CategoryId,
                 CategoryName = p.Category!.Name,
+                DiscountPercent = p.DiscountPercent,
                 CatalogMainUrl = p.Media
                     .Where(m => m.MediaType == MediaType.Image && m.DisplayOrder == 1)
                     .Select(m => m.Url)
@@ -215,6 +191,7 @@ public class ProductRepository : IProductRepository
                 IsActive = p.IsActive,
                 CategoryId = p.CategoryId,
                 CategoryName = p.Category!.Name,
+                DiscountPercent = p.DiscountPercent,
                 CatalogMainUrl = p.Media
                     .Where(m => m.MediaType == MediaType.Image && m.DisplayOrder == 1)
                     .Select(m => m.Url)
@@ -282,6 +259,7 @@ public class ProductRepository : IProductRepository
                 IsActive = p.IsActive,
                 CategoryId = p.CategoryId,
                 CategoryName = p.Category!.Name,
+                DiscountPercent = p.DiscountPercent,
                 CatalogMainUrl = p.Media
                     .Where(m => m.MediaType == MediaType.Image && m.DisplayOrder == 1)
                     .Select(m => m.Url)
