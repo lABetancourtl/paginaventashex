@@ -4,6 +4,7 @@ using PaginaVentasNet.Api.Common.Responses;
 using PaginaVentasNet.Api.Controllers;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Categories.Dtos;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Categories.UseCases;
+using PaginaVentasNet.Api.Common.Exceptions;
 
 namespace PaginaVentasNet.Api.Modules.Catalog.Presentation;
 
@@ -17,17 +18,20 @@ public class CategoryController : ApiController
     private readonly GetCategoriesUseCase _getCategoriesUseCase;
     private readonly UpdateCategoryUseCase _updateCategoryUseCase;
     private readonly GetCategoryTreeUseCase _getCategoryTreeUseCase;
+        private readonly ReorderCategoryUseCase _reorderCategoryUseCase;
 
     public CategoryController(
         CreateCategoryUseCase createCategoryUseCase,
         GetCategoriesUseCase getCategoriesUseCase,
         UpdateCategoryUseCase updateCategoryUseCase,
-        GetCategoryTreeUseCase getCategoryTreeUseCase)
+        GetCategoryTreeUseCase getCategoryTreeUseCase,
+        ReorderCategoryUseCase reorderCategoryUseCase)
     {
         _createCategoryUseCase = createCategoryUseCase;
         _getCategoriesUseCase = getCategoriesUseCase;
         _updateCategoryUseCase = updateCategoryUseCase;
         _getCategoryTreeUseCase = getCategoryTreeUseCase;
+        _reorderCategoryUseCase = reorderCategoryUseCase;
     }
 
     /// <summary> 
@@ -168,6 +172,27 @@ public class CategoryController : ApiController
     {
         var tree = await _getCategoryTreeUseCase.ExecuteAsync();
         return Success(tree);
+    }
+
+    /// <summary>
+    /// Mueve una categoría a un nuevo orden entre sus hermanas. Solo Admin.
+    /// La hermana que ocupa el orden destino toma el orden que deja la categoría movida.
+    /// </summary>
+    /// <param name="id">Id de la categoría a mover.</param>
+    /// <param name="dto">Orden destino.</param>
+    [HttpPatch("{id}/reorder")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<ApiResponse<bool>>> Reorder(int id, ReorderCategoryDto dto)
+    {
+        try
+        {
+            await _reorderCategoryUseCase.ExecuteAsync(id, dto);
+            return Success(true);
+        }
+        catch (AppException ex)
+        {
+            return Failure<bool>(ex.Code, ex.Message, ex.StatusCode);
+        }
     }
 
 

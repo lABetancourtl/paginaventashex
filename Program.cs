@@ -117,6 +117,7 @@ builder.Services.AddScoped<CreateCategoryUseCase>();
 builder.Services.AddScoped<GetCategoriesUseCase>();
 builder.Services.AddScoped<UpdateCategoryUseCase>();
 builder.Services.AddScoped<GetCategoryTreeUseCase>();
+builder.Services.AddScoped<ReorderCategoryUseCase>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<CreateProductUseCase>();
 builder.Services.AddScoped<UpdateProductUseCase>();

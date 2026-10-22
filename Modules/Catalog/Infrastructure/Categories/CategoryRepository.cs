@@ -188,4 +188,15 @@ public class CategoryRepository : ICategoryRepository
         return (maxOrder ?? 0) + 1;
     }
 
+    /// <summary>
+    /// Obtiene la categoría hermana (mismo padre; si es null, entre las raíces)
+    /// que ocupa un orden específico. Retorna null si no existe ninguna.
+    /// </summary>
+    public async Task<Category?> GetSiblingByDisplayOrderAsync(int? parentCategoryId, int displayOrder)
+    {
+        return await _context.Categories
+            .FirstOrDefaultAsync(c => c.ParentCategoryId == parentCategoryId
+                                && c.DisplayOrder == displayOrder);
+    }
+
 }

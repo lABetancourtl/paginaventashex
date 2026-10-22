@@ -19,4 +19,5 @@ public interface ICategoryRepository
     Task UpdateAsync(Category category);
     Task<List<CategoryTreeDto>> GetTreeAsync();
     Task<int> GetNextDisplayOrderAsync(int? parentCategoryId);
+    Task<Category?> GetSiblingByDisplayOrderAsync(int? parentCategoryId, int displayOrder);
 }
