@@ -11,6 +11,7 @@ public interface ICategoryRepository
     Task AddAsync(Category category);
     Task<bool> ExistsByIdAsync(int categoryId);
     Task<bool> ExistsBySlugAsync(string slug);
+    Task<bool> ExistsActiveBySlugAsync(string slug);
     Task<List<CategoryResponseDto>> GetAllAsync();
     Task<CategoryResponseDto?> GetByIdAsync(int id);
     Task<Category?> GetEntityByIdAsync(int id);

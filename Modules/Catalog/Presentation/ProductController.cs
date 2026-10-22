@@ -4,6 +4,7 @@ using PaginaVentasNet.Api.Common.Responses;
 using PaginaVentasNet.Api.Controllers;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Products.Dtos;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Products.UseCases;
+using PaginaVentasNet.Api.Common.Exceptions;
 
 namespace PaginaVentasNet.Api.Modules.Catalog.Presentation;
 
@@ -156,8 +157,15 @@ public class ProductController : ApiController
     public async Task<ActionResult<ApiResponse<PagedResultDto<ProductResponseDto>>>> Search(
         [FromQuery] SearchProductsDto dto)
     {
-        var result = await _searchProductsUseCase.ExecuteAsync(dto);
-        return Success(result);
+        try
+        {
+            var result = await _searchProductsUseCase.ExecuteAsync(dto);
+            return Success(result);
+        }
+        catch (AppException ex)
+        {
+            return Failure<PagedResultDto<ProductResponseDto>>(ex.Code, ex.Message, ex.StatusCode);
+        }
     }
 
     /// <summary>

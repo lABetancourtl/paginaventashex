@@ -10,5 +10,6 @@ public class CategoryTreeDto
     public string Slug { get; set; } = string.Empty;
     public int? ParentCategoryId { get; set; }
     public bool IsActive { get; set; }
+    public int DisplayOrder { get; set; }
     public List<CategoryTreeDto> Children { get; set; } = new();
 }

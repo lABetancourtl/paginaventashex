@@ -159,11 +159,13 @@ public class ProductRepository : IProductRepository
     /// <returns>Resultado paginado de productos que coinciden con los criterios de búsqueda.</returns>
     public async Task<PagedResultDto<ProductResponseDto>> SearchAsync(SearchProductsDto dto)
     {
-        const int pageSize = 10;
+        const int pageSize = 24;
 
         var query = _context.Products
             .Include(p => p.Category)
             .Where(p => p.IsActive)
+            .Where(p => p.Category!.IsActive &&
+                    (p.Category.ParentCategory == null || p.Category.ParentCategory.IsActive))
             .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(dto.Search))
@@ -231,7 +233,7 @@ public class ProductRepository : IProductRepository
     /// <returns></returns>
     public async Task<PagedResultDto<ProductResponseDto>> AdminSearchAsync(AdminSearchProductsDto dto)
     {
-        const int pageSize = 20;
+        const int pageSize = 24;
 
         if (dto.Page < 1)
             dto.Page = 1;

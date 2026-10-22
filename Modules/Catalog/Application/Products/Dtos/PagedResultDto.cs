@@ -2,7 +2,7 @@ namespace PaginaVentasNet.Api.Modules.Catalog.Application.Products.Dtos;
 
 public class PagedResultDto<T>
 {
-    private const int PageSize = 10;
+    private const int PageSize = 24;
 
     public List<T> Items { get; set; } = new();
     public int TotalItems { get; set; }

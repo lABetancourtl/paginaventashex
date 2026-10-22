@@ -40,6 +40,18 @@ public class CategoryRepository : ICategoryRepository
     }
 
     /// <summary>
+    /// Verifica si existe una categoría con ese slug y si es visible en el catálogo:
+    /// ella misma y su categoría padre (si tiene) deben estar activas.
+    /// </summary>
+    public async Task<bool> ExistsActiveBySlugAsync(string slug)
+    {
+        return await _context.Categories
+            .AnyAsync(c => c.Slug == slug
+                        && c.IsActive
+                        && (c.ParentCategory == null || c.ParentCategory.IsActive));
+    }
+
+    /// <summary>
     /// Guarda los cambios en la base de datos.
     /// </summary>
     /// <returns>Tarea que representa la operación de guardado.</returns>
@@ -62,8 +74,11 @@ public class CategoryRepository : ICategoryRepository
                 Slug = c.Slug,
                 ParentCategoryId = c.ParentCategoryId,
                 IsActive = c.IsActive,
+                DisplayOrder = c.DisplayOrder,
                 CreatedAtUtc = c.CreatedAtUtc
             })
+            .OrderBy(c => c.ParentCategoryId)
+            .ThenBy(c => c.DisplayOrder)
             .ToListAsync();
     }
 
@@ -94,6 +109,7 @@ public class CategoryRepository : ICategoryRepository
                 Slug = c.Slug,
                 ParentCategoryId = c.ParentCategoryId,
                 IsActive = c.IsActive,
+                DisplayOrder = c.DisplayOrder,
                 CreatedAtUtc = c.CreatedAtUtc
             })
             .FirstOrDefaultAsync();
@@ -127,7 +143,8 @@ public class CategoryRepository : ICategoryRepository
     {
         var todasLasCategorias = await _context.Categories
         .Where(c => c.IsActive)
-        .OrderBy(c => c.Name)
+        .OrderBy(c => c.DisplayOrder)
+        .ThenBy(c => c.Name)
         .ToListAsync();
 
         return todasLasCategorias
@@ -148,9 +165,11 @@ public class CategoryRepository : ICategoryRepository
             Slug = category.Slug,
             ParentCategoryId = category.ParentCategoryId,
             IsActive = category.IsActive,
+            DisplayOrder = category.DisplayOrder,
             Children = todas
                 .Where(c => c.ParentCategoryId == category.Id)
-                .OrderBy(c => c.Name)
+                .OrderBy(c => c.DisplayOrder)
+                .ThenBy(c => c.Name)
                 .Select(c => MapToTree(c, todas))
                 .ToList()
         };

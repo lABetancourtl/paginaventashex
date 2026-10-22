@@ -7,5 +7,6 @@ public class CategoryResponseDto
     public string Slug { get; set; } = string.Empty;
     public int? ParentCategoryId { get; set; }
     public bool IsActive { get; set; }
+    public int DisplayOrder { get; set; }
     public DateTime CreatedAtUtc { get; set; }
 }
