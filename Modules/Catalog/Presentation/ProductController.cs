@@ -19,17 +19,20 @@ public class ProductController : ApiController
     private readonly UpdateProductUseCase _updateProductUseCase;
     private readonly SearchProductsUseCase _searchProductsUseCase;
     private readonly AdminSearchProductsUseCase _adminSearchProductsUseCase;
+    private readonly GetProductByIdUseCase _getProductByIdUseCase;
 
     public ProductController(
         CreateProductUseCase createProductUseCase,
         UpdateProductUseCase updateProductUseCase,
         SearchProductsUseCase searchProductsUseCase,
-        AdminSearchProductsUseCase adminSearchProductsUseCase)
+        AdminSearchProductsUseCase adminSearchProductsUseCase,
+        GetProductByIdUseCase getProductByIdUseCase)
     {
         _createProductUseCase = createProductUseCase;
         _updateProductUseCase = updateProductUseCase;
         _searchProductsUseCase = searchProductsUseCase;
         _adminSearchProductsUseCase = adminSearchProductsUseCase;
+        _getProductByIdUseCase = getProductByIdUseCase;
     }
 
     /// <summary>
@@ -165,6 +168,46 @@ public class ProductController : ApiController
         catch (AppException ex)
         {
             return Failure<PagedResultDto<ProductResponseDto>>(ex.Code, ex.Message, ex.StatusCode);
+        }
+    }
+
+        /// <summary>
+    /// Detalle público de un producto, con todas sus imágenes y su video.
+    /// Solo responde si el producto es visible en el catálogo: producto activo,
+    /// y su subcategoría y su raíz también activas. Si no, responde 404.
+    /// </summary>
+    /// <param name="id">Id del producto.</param>
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<ApiResponse<ProductResponseDto>>> GetById(int id)
+    {
+        try
+        {
+            var product = await _getProductByIdUseCase.ExecuteAsync(id, onlyVisible: true);
+            return Success(product);
+        }
+        catch (AppException ex)
+        {
+            return Failure<ProductResponseDto>(ex.Code, ex.Message, ex.StatusCode);
+        }
+    }
+
+    /// <summary>
+    /// Detalle de un producto para el panel admin (formulario de edición).
+    /// Devuelve cualquier producto, esté activo o no. Solo Admin.
+    /// </summary>
+    /// <param name="id">Id del producto.</param>
+    [HttpGet("admin/{id:int}")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<ApiResponse<ProductResponseDto>>> AdminGetById(int id)
+    {
+        try
+        {
+            var product = await _getProductByIdUseCase.ExecuteAsync(id, onlyVisible: false);
+            return Success(product);
+        }
+        catch (AppException ex)
+        {
+            return Failure<ProductResponseDto>(ex.Code, ex.Message, ex.StatusCode);
         }
     }
 

@@ -12,7 +12,7 @@ public interface IProductRepository
     Task<bool> ExistsBySkuAsync(string sku);
     Task SaveChangesAsync();
     Task<List<ProductResponseDto>> GetAllAsync();
-    Task<ProductResponseDto?> GetByIdAsync(int id);
+    Task<ProductResponseDto?> GetByIdAsync(int id, bool onlyVisible = false);       
     Task UpdateAsync(Product product);
     Task<Product?> GetEntityByIdAsync(int id);
     Task<PagedResultDto<ProductResponseDto>> SearchAsync(SearchProductsDto dto);

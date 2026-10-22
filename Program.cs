@@ -123,6 +123,7 @@ builder.Services.AddScoped<CreateProductUseCase>();
 builder.Services.AddScoped<UpdateProductUseCase>();
 builder.Services.AddScoped<SearchProductsUseCase>();
 builder.Services.AddScoped<AdminSearchProductsUseCase>();
+builder.Services.AddScoped<GetProductByIdUseCase>();
 
 // Identity
 builder.Services.AddScoped<IUsuarioRepository, UsuarioRepository>();

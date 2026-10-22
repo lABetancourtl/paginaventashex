@@ -86,16 +86,27 @@ public class ProductRepository : IProductRepository
     }
 
     /// <summary>
-    /// Obtiene un producto por su Id.
+    /// Obtiene un producto por su Id, con la opción de filtrar solo los productos visibles.
     /// </summary>
     /// <param name="id">Id del producto a buscar.</param>
+    /// <param name="onlyVisible">Indica si solo se deben incluir productos visibles.</param>
     /// <returns>Datos del producto o null si no existe.</returns>
-    public async Task<ProductResponseDto?> GetByIdAsync(int id)
+    public async Task<ProductResponseDto?> GetByIdAsync(int id, bool onlyVisible = false)
     {
-        return await _context.Products
+        var query = _context.Products
             .Include(p => p.Category)
             .Include(p => p.Media.OrderBy(m => m.DisplayOrder))
-            .Where(p => p.Id == id)
+            .Where(p => p.Id == id);
+
+        if (onlyVisible)
+        {
+            query = query
+                .Where(p => p.IsActive)
+                .Where(p => p.Category!.IsActive &&
+                           (p.Category.ParentCategory == null || p.Category.ParentCategory.IsActive));
+        }
+
+        return await query
             .Select(p => new ProductResponseDto
             {
                 Id = p.Id,
