@@ -5,6 +5,7 @@ using PaginaVentasNet.Api.Modules.Catalog.Application.Products.Dtos;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Products.Ports;
 using PaginaVentasNet.Api.Modules.Catalog.Domain;
 using PaginaVentasNet.Api.Modules.Catalog.Domain.Enums;
+using PaginaVentasNet.Api.Modules.Catalog.Application.Variants.Dtos;
 
 namespace PaginaVentasNet.Api.Modules.Catalog.Infrastructure.Products;
 
@@ -137,6 +138,28 @@ public class ProductRepository : IProductRepository
                         DisplayOrder = m.DisplayOrder
                     })
                     .ToList(),
+                InStock = p.Variants.Any(v => v.IsActive && v.Stock > 0),
+                Variants = p.Variants
+                    .Where(v => !onlyVisible || v.IsActive)
+                    .OrderBy(v => v.Size!.SizeGroup)
+                    .ThenBy(v => v.Size!.DisplayOrder)
+                    .ThenBy(v => v.Color!.Name)
+                    .ThenBy(v => v.Id)
+                    .Select(v => new ProductVariantResponseDto
+                    {
+                        Id = v.Id,
+                        ProductId = v.ProductId,
+                        SizeId = v.SizeId,
+                        SizeGroup = v.Size == null ? (SizeGroup?)null : v.Size.SizeGroup,
+                        SizeName = v.Size == null ? null : v.Size.Name,
+                        ColorId = v.ColorId,
+                        ColorName = v.Color == null ? null : v.Color.Name,
+                        ColorHexCode = v.Color == null ? null : v.Color.HexCode,
+                        Sku = v.Sku,
+                        Stock = v.Stock,
+                        IsActive = v.IsActive
+                    })
+                    .ToList(),
                 CreatedAtUtc = p.CreatedAtUtc
             })
             .FirstOrDefaultAsync();
@@ -224,6 +247,7 @@ public class ProductRepository : IProductRepository
                     .Where(m => m.MediaType == MediaType.Image && m.DisplayOrder == 2)
                     .Select(m => m.Url)
                     .FirstOrDefault(),
+                InStock = p.Variants.Any(v => v.IsActive && v.Stock > 0),
                 Media = new List<ProductMediaResponseDto>(),
                 CreatedAtUtc = p.CreatedAtUtc
             })
@@ -292,6 +316,8 @@ public class ProductRepository : IProductRepository
                     .Where(m => m.MediaType == MediaType.Image && m.DisplayOrder == 2)
                     .Select(m => m.Url)
                     .FirstOrDefault(),
+                InStock = p.Variants.Any(v => v.IsActive && v.Stock > 0),
+                TotalStock = p.Variants.Where(v => v.IsActive).Sum(v => v.Stock),
                 Media = new List<ProductMediaResponseDto>(),
                 CreatedAtUtc = p.CreatedAtUtc
             })

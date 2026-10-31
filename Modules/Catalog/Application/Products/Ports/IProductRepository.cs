@@ -11,7 +11,6 @@ public interface IProductRepository
     Task AddAsync(Product product);
     Task<bool> ExistsBySkuAsync(string sku);
     Task SaveChangesAsync();
-    Task<List<ProductResponseDto>> GetAllAsync();
     Task<ProductResponseDto?> GetByIdAsync(int id, bool onlyVisible = false);       
     Task UpdateAsync(Product product);
     Task<Product?> GetEntityByIdAsync(int id);
