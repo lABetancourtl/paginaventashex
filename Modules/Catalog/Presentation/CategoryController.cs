@@ -175,6 +175,19 @@ public class CategoryController : ApiController
     }
 
     /// <summary>
+    /// Obtiene el árbol de categorías completo para el panel admin,
+    /// incluyendo las desactivadas para poder reactivarlas. Solo Admin.
+    /// </summary>
+    /// <returns>El árbol con todas las categorías; cada nodo trae isActive.</returns>
+    [HttpGet("admin/tree")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<ApiResponse<List<CategoryTreeDto>>>> GetAdminTree()
+    {
+        var tree = await _getCategoryTreeUseCase.ExecuteAsync(includeInactive: true);
+        return Success(tree);
+    }
+
+    /// <summary>
     /// Mueve una categoría a un nuevo orden entre sus hermanas. Solo Admin.
     /// La hermana que ocupa el orden destino toma el orden que deja la categoría movida.
     /// </summary>

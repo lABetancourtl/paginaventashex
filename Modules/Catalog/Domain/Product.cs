@@ -15,9 +15,10 @@ public class Product
     public Category? Category { get; private set; }
     public DateTime CreatedAtUtc { get; private set; }
     public ICollection<ProductMedia> Media { get; private set; } = new List<ProductMedia>();
+    public ICollection<ProductVariant> Variants { get; private set; } = new List<ProductVariant>();
     public int? DiscountPercent { get; private set; }
 
-    /// <summary>Precio que realmente paga el cliente. Se calcula, no se guarda.</summary>/// <summary>Precio que realmente paga el cliente. Se calcula, no se guarda.</summary>
+    /// <summary>Precio que realmente paga el cliente. Se calcula, no se guarda.</summary>
     public decimal FinalPrice => PriceCalculator.Final(Price, DiscountPercent);
 
     private Product() { }
@@ -33,8 +34,8 @@ public class Product
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("El nombre del producto es obligatorio.");
 
-        if (price < 0)
-            throw new ArgumentException("El precio no puede ser negativo.");
+        if (price <= 0)
+            throw new ArgumentException("El precio debe ser mayor a cero.");
 
         if (stock < 0)
             throw new ArgumentException("El stock no puede ser negativo.");
@@ -60,8 +61,8 @@ public class Product
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("El nombre del producto es obligatorio.");
 
-        if (price < 0)
-            throw new ArgumentException("El precio no puede ser negativo.");
+        if (price <= 0)
+            throw new ArgumentException("El precio debe ser mayor a cero.");
 
     Name = name.Trim();
     Description = description.Trim();

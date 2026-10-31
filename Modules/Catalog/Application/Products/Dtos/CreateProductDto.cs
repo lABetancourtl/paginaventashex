@@ -11,7 +11,7 @@ public class CreateProductDto
     [StringLength(1000, ErrorMessage = "La descripción no puede superar 1000 caracteres.")]
     public string Description { get; set; } = string.Empty;
 
-    [Range(0, double.MaxValue, ErrorMessage = "El precio no puede ser negativo.")]
+    [Range(0.01, double.MaxValue, ErrorMessage = "El precio debe ser mayor a cero.")]
     public decimal Price { get; set; }
 
     [Required(ErrorMessage = "El SKU es obligatorio.")]
@@ -21,6 +21,6 @@ public class CreateProductDto
     [Range(0, int.MaxValue, ErrorMessage = "El stock no puede ser negativo.")]
     public int Stock { get; set; }
 
-    [Required(ErrorMessage = "La categoría es obligatoria.")]
+    [Range(1, int.MaxValue, ErrorMessage = "La categoría es obligatoria.")]
     public int CategoryId { get; set; }
 }

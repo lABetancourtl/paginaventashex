@@ -13,6 +13,7 @@ using PaginaVentasNet.Api.Modules.Orders.Domain;
 using PaginaVentasNet.Api.Modules.Orders.Infrastructure;
 using PaginaVentasNet.Api.Modules.Payments.Domain;
 using PaginaVentasNet.Api.Modules.Payments.Infrastructure;
+using PaginaVentasNet.Api.Modules.Catalog.Infrastructure.Variants;
 
 namespace PaginaVentasNet.Api.Data;
 
@@ -29,6 +30,9 @@ public class AppDbContext : DbContext
     public DbSet<Product> Products { get; set; }
     public DbSet<Usuario> Usuarios { get; set; }
     public DbSet<ProductMedia> ProductMedia { get; set; }
+    public DbSet<Size> Sizes { get; set; }
+    public DbSet<Color> Colors { get; set; }
+    public DbSet<ProductVariant> ProductVariants { get; set; }
     public DbSet<OtpCode> OtpCodes { get; set; }
     public DbSet<Departamento> Departamentos { get; set; }
     public DbSet<Municipio> Municipios { get; set; }
@@ -44,6 +48,9 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new CategoryConfiguration());
         modelBuilder.ApplyConfiguration(new ProductConfiguration());
         modelBuilder.ApplyConfiguration(new ProductMediaConfiguration());
+        modelBuilder.ApplyConfiguration(new SizeConfiguration());
+        modelBuilder.ApplyConfiguration(new ColorConfiguration());
+        modelBuilder.ApplyConfiguration(new ProductVariantConfiguration());
         modelBuilder.ApplyConfiguration(new UsuarioConfiguration());
         modelBuilder.ApplyConfiguration(new OtpConfiguration());
         modelBuilder.ApplyConfiguration(new DepartamentoConfiguration());

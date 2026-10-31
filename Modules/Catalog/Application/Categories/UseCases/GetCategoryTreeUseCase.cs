@@ -4,7 +4,7 @@ using PaginaVentasNet.Api.Modules.Catalog.Application.Categories.Ports;
 namespace PaginaVentasNet.Api.Modules.Catalog.Application.Categories.UseCases;
 
 /// <summary>
-/// Caso de uso para obtener todas las categorías en estructura jerárquica.
+/// Caso de uso para obtener las categorías en estructura jerárquica.
 /// </summary>
 public class GetCategoryTreeUseCase
 {
@@ -16,10 +16,11 @@ public class GetCategoryTreeUseCase
     }
 
     /// <summary>
-    /// Retorna todas las categorías activas organizadas en árbol jerárquico.
+    /// Con includeInactive = false (tienda pública) retorna solo las categorías activas.
+    /// Con includeInactive = true (panel admin) retorna todas, activas o no.
     /// </summary>
-    public async Task<List<CategoryTreeDto>> ExecuteAsync()
+    public async Task<List<CategoryTreeDto>> ExecuteAsync(bool includeInactive = false)
     {
-        return await _repository.GetTreeAsync();
+        return await _repository.GetTreeAsync(includeInactive);
     }
 }

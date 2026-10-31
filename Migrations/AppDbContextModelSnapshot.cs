@@ -116,6 +116,34 @@ namespace PaginaVentasNet.Api.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("PaginaVentasNet.Api.Modules.Catalog.Domain.Color", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("HexCode")
+                        .HasMaxLength(7)
+                        .HasColumnType("character varying(7)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Colors");
+                });
+
             modelBuilder.Entity("PaginaVentasNet.Api.Modules.Catalog.Domain.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -208,6 +236,88 @@ namespace PaginaVentasNet.Api.Migrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("ProductMedia");
+                });
+
+            modelBuilder.Entity("PaginaVentasNet.Api.Modules.Catalog.Domain.ProductVariant", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("ColorId")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("SizeId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Sku")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int>("Stock")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ColorId");
+
+                    b.HasIndex("SizeId");
+
+                    b.HasIndex("Sku")
+                        .IsUnique();
+
+                    b.HasIndex("ProductId", "SizeId", "ColorId")
+                        .IsUnique();
+
+                    NpgsqlIndexBuilderExtensions.AreNullsDistinct(b.HasIndex("ProductId", "SizeId", "ColorId"), false);
+
+                    b.ToTable("ProductVariants", t =>
+                        {
+                            t.HasCheckConstraint("CK_ProductVariants_Stock", "\"Stock\" >= 0");
+                        });
+                });
+
+            modelBuilder.Entity("PaginaVentasNet.Api.Modules.Catalog.Domain.Size", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("SizeGroup")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SizeGroup", "DisplayOrder");
+
+                    b.HasIndex("SizeGroup", "Name")
+                        .IsUnique();
+
+                    b.ToTable("Sizes");
                 });
 
             modelBuilder.Entity("PaginaVentasNet.Api.Modules.Geography.Domain.Departamento", b =>
@@ -615,6 +725,29 @@ namespace PaginaVentasNet.Api.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("PaginaVentasNet.Api.Modules.Catalog.Domain.ProductVariant", b =>
+                {
+                    b.HasOne("PaginaVentasNet.Api.Modules.Catalog.Domain.Color", "Color")
+                        .WithMany()
+                        .HasForeignKey("ColorId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("PaginaVentasNet.Api.Modules.Catalog.Domain.Product", null)
+                        .WithMany("Variants")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PaginaVentasNet.Api.Modules.Catalog.Domain.Size", "Size")
+                        .WithMany()
+                        .HasForeignKey("SizeId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Color");
+
+                    b.Navigation("Size");
+                });
+
             modelBuilder.Entity("PaginaVentasNet.Api.Modules.Geography.Domain.Municipio", b =>
                 {
                     b.HasOne("PaginaVentasNet.Api.Modules.Geography.Domain.Departamento", "Departamento")
@@ -673,6 +806,8 @@ namespace PaginaVentasNet.Api.Migrations
             modelBuilder.Entity("PaginaVentasNet.Api.Modules.Catalog.Domain.Product", b =>
                 {
                     b.Navigation("Media");
+
+                    b.Navigation("Variants");
                 });
 
             modelBuilder.Entity("PaginaVentasNet.Api.Modules.Geography.Domain.Departamento", b =>

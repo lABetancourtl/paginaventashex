@@ -28,23 +28,39 @@ public class CreateProductUseCase
     /// <returns>Id del producto creado.</returns>
     public async Task<int> ExecuteAsync(CreateProductDto dto)
     {
-        var categoryExists = await _categoryRepository.ExistsByIdAsync(dto.CategoryId);
+        var category = await _categoryRepository.GetEntityByIdAsync(dto.CategoryId);
 
-        if (!categoryExists)
+        if (category is null)
             throw new InvalidOperationException(
                 $"No existe una categoría con Id '{dto.CategoryId}'.");
 
-        var skuExists = await _productRepository.ExistsBySkuAsync(dto.Sku);
+        if (category.ParentCategoryId is null)
+            throw new ArgumentException(
+                "Los productos solo se pueden crear en una subcategoría, no en una categoría principal.");
+
+        if (!category.IsActive)
+            throw new ArgumentException(
+                "La subcategoría está desactivada. Actívala antes de crear productos en ella.");
+
+        var parent = await _categoryRepository.GetEntityByIdAsync(category.ParentCategoryId.Value);
+
+        if (parent is null || !parent.IsActive)
+            throw new ArgumentException(
+                "La categoría principal está desactivada. Actívala antes de crear productos en ella.");
+
+        var sku = dto.Sku.Trim().ToUpper();
+
+        var skuExists = await _productRepository.ExistsBySkuAsync(sku);
 
         if (skuExists)
             throw new InvalidOperationException(
-                $"Ya existe un producto con el SKU '{dto.Sku}'.");
+                $"Ya existe un producto con el SKU '{sku}'.");
 
         var product = Product.Create(
             dto.Name,
             dto.Description,
             dto.Price,
-            dto.Sku,
+            sku,
             dto.Stock,
             dto.CategoryId);
 

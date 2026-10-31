@@ -171,7 +171,7 @@ public class ProductController : ApiController
         }
     }
 
-        /// <summary>
+    /// <summary>
     /// Detalle público de un producto, con todas sus imágenes y su video.
     /// Solo responde si el producto es visible en el catálogo: producto activo,
     /// y su subcategoría y su raíz también activas. Si no, responde 404.
