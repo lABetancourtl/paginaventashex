@@ -51,6 +51,8 @@ using PaginaVentasNet.Api.Modules.Payments.Application.UseCases;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Sizes.Ports;
 using PaginaVentasNet.Api.Modules.Catalog.Infrastructure.Variants;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Sizes.UseCases;
+using PaginaVentasNet.Api.Modules.Catalog.Application.Colors.Ports;
+using PaginaVentasNet.Api.Modules.Catalog.Application.Colors.UseCases;
 
 Env.Load(".env");
 
@@ -127,6 +129,11 @@ builder.Services.AddScoped<CreateSizeUseCase>();
 builder.Services.AddScoped<UpdateSizeUseCase>();
 builder.Services.AddScoped<ChangeSizeStatusUseCase>();
 builder.Services.AddScoped<ReorderSizeUseCase>();
+builder.Services.AddScoped<IColorRepository, ColorRepository>();
+builder.Services.AddScoped<GetColorsUseCase>();
+builder.Services.AddScoped<CreateColorUseCase>();
+builder.Services.AddScoped<UpdateColorUseCase>();
+builder.Services.AddScoped<ChangeColorStatusUseCase>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<CreateProductUseCase>();
 builder.Services.AddScoped<UpdateProductUseCase>();
