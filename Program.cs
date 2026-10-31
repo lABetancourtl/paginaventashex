@@ -53,6 +53,8 @@ using PaginaVentasNet.Api.Modules.Catalog.Infrastructure.Variants;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Sizes.UseCases;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Colors.Ports;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Colors.UseCases;
+using PaginaVentasNet.Api.Modules.Catalog.Application.Variants.Ports;
+using PaginaVentasNet.Api.Modules.Catalog.Application.Variants.UseCases;
 
 Env.Load(".env");
 
@@ -134,6 +136,11 @@ builder.Services.AddScoped<GetColorsUseCase>();
 builder.Services.AddScoped<CreateColorUseCase>();
 builder.Services.AddScoped<UpdateColorUseCase>();
 builder.Services.AddScoped<ChangeColorStatusUseCase>();
+builder.Services.AddScoped<IProductVariantRepository, ProductVariantRepository>();
+builder.Services.AddScoped<GetProductVariantsUseCase>();
+builder.Services.AddScoped<CreateProductVariantUseCase>();
+builder.Services.AddScoped<UpdateProductVariantUseCase>();
+builder.Services.AddScoped<ChangeProductVariantStatusUseCase>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<CreateProductUseCase>();
 builder.Services.AddScoped<UpdateProductUseCase>();

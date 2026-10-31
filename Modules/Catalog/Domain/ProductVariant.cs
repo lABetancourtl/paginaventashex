@@ -51,6 +51,12 @@ public class ProductVariant
         Sku = sku.Trim().ToUpper();
     }
 
+    public void ChangeAttributes(int? sizeId, int? colorId)
+    {
+        SizeId = sizeId;
+        ColorId = colorId;
+    }
+
     public void SetStock(int stock)
     {
         if (stock < 0)
