@@ -2,6 +2,7 @@ using PaginaVentasNet.Api.Modules.Catalog.Domain;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Products.Dtos;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Products.Ports;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Categories.Ports;
+using PaginaVentasNet.Api.Modules.Catalog.Application.Variants.Ports;
 
 namespace PaginaVentasNet.Api.Modules.Catalog.Application.Products.UseCases;
 
@@ -12,13 +13,16 @@ public class CreateProductUseCase
 {
     private readonly IProductRepository _productRepository;
     private readonly ICategoryRepository _categoryRepository;
+    private readonly IProductVariantRepository _variantRepository;
 
     public CreateProductUseCase(
         IProductRepository productRepository,
-        ICategoryRepository categoryRepository)
+        ICategoryRepository categoryRepository,
+        IProductVariantRepository variantRepository)
     {
         _productRepository = productRepository;
         _categoryRepository = categoryRepository;
+        _variantRepository = variantRepository;
     }
 
     /// <summary>
@@ -50,11 +54,12 @@ public class CreateProductUseCase
 
         var sku = dto.Sku.Trim().ToUpper();
 
-        var skuExists = await _productRepository.ExistsBySkuAsync(sku);
+        var skuExists = await _productRepository.ExistsBySkuAsync(sku)
+                        || await _variantRepository.ExistsBySkuAsync(sku);
 
         if (skuExists)
             throw new InvalidOperationException(
-                $"Ya existe un producto con el SKU '{sku}'.");
+                $"Ya existe un producto o una variante con el SKU '{sku}'.");
 
         var product = Product.Create(
             dto.Name,
@@ -63,6 +68,8 @@ public class CreateProductUseCase
             sku,
             dto.Stock,
             dto.CategoryId);
+
+        product.AddDefaultVariant();
 
         await _productRepository.AddAsync(product);
         await _productRepository.SaveChangesAsync();

@@ -69,6 +69,15 @@ public class Product
     Price = price;
     }
 
+    /// <summary>
+    /// Agrega la variante inicial del producto, sin talla ni color, con el SKU y el stock del producto.
+    /// Se llama al crear el producto: toda la compra, el carrito y el stock trabajan sobre variantes.
+    /// </summary>
+    public void AddDefaultVariant()
+    {
+        Variants.Add(ProductVariant.Create(0, null, null, Sku, Stock));
+    }
+
     public void Activate()
     {
         if (IsActive)
