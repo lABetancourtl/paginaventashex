@@ -48,6 +48,9 @@ using PaginaVentasNet.Api.Modules.Orders.Application.UseCases;
 using PaginaVentasNet.Api.Modules.Payments.Application.Ports;
 using PaginaVentasNet.Api.Modules.Payments.Infrastructure;
 using PaginaVentasNet.Api.Modules.Payments.Application.UseCases;
+using PaginaVentasNet.Api.Modules.Catalog.Application.Sizes.Ports;
+using PaginaVentasNet.Api.Modules.Catalog.Infrastructure.Variants;
+using PaginaVentasNet.Api.Modules.Catalog.Application.Sizes.UseCases;
 
 Env.Load(".env");
 
@@ -118,6 +121,12 @@ builder.Services.AddScoped<GetCategoriesUseCase>();
 builder.Services.AddScoped<UpdateCategoryUseCase>();
 builder.Services.AddScoped<GetCategoryTreeUseCase>();
 builder.Services.AddScoped<ReorderCategoryUseCase>();
+builder.Services.AddScoped<ISizeRepository, SizeRepository>();
+builder.Services.AddScoped<GetSizesUseCase>();
+builder.Services.AddScoped<CreateSizeUseCase>();
+builder.Services.AddScoped<UpdateSizeUseCase>();
+builder.Services.AddScoped<ChangeSizeStatusUseCase>();
+builder.Services.AddScoped<ReorderSizeUseCase>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<CreateProductUseCase>();
 builder.Services.AddScoped<UpdateProductUseCase>();
