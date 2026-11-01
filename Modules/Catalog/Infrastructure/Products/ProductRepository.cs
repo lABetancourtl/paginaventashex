@@ -49,42 +49,7 @@ public class ProductRepository : IProductRepository
         await _context.SaveChangesAsync();
     }
 
-    /// <summary> 
-    /// Obtiene todos los productos activos.
-    /// </summary>
-    /// <returns>Lista de productos.</returns>
-    public async Task<List<ProductResponseDto>> GetAllAsync()
-    {
-        return await _context.Products
-            .Include(p => p.Category)
-            .Include(p => p.Media)
-            .Where(p => p.IsActive)
-            .OrderBy(p => p.Name)   
-            .Select(p => new ProductResponseDto
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Description = p.Description,
-                Price = p.Price,
-                Sku = p.Sku,
-                Stock = p.Stock,
-                IsActive = p.IsActive,
-                CategoryId = p.CategoryId,
-                CategoryName = p.Category!.Name,
-                DiscountPercent = p.DiscountPercent,
-                CatalogMainUrl = p.Media
-                    .Where(m => m.MediaType == MediaType.Image && m.DisplayOrder == 1)
-                    .Select(m => m.Url)
-                    .FirstOrDefault(),
-                CatalogHoverUrl = p.Media
-                    .Where(m => m.MediaType == MediaType.Image && m.DisplayOrder == 2)
-                    .Select(m => m.Url)
-                    .FirstOrDefault(),
-                Media = new List<ProductMediaResponseDto>(),
-                CreatedAtUtc = p.CreatedAtUtc
-            })
-            .ToListAsync();
-    }
+ 
 
     /// <summary>
     /// Obtiene un producto por su Id, con la opción de filtrar solo los productos visibles.
@@ -114,8 +79,6 @@ public class ProductRepository : IProductRepository
                 Name = p.Name,
                 Description = p.Description,
                 Price = p.Price,
-                Sku = p.Sku,
-                Stock = p.Stock,
                 IsActive = p.IsActive,
                 CategoryId = p.CategoryId,
                 CategoryName = p.Category!.Name,
@@ -233,8 +196,6 @@ public class ProductRepository : IProductRepository
                 Name = p.Name,
                 Description = p.Description,
                 Price = p.Price,
-                Sku = p.Sku,
-                Stock = p.Stock,
                 IsActive = p.IsActive,
                 CategoryId = p.CategoryId,
                 CategoryName = p.Category!.Name,
@@ -302,8 +263,6 @@ public class ProductRepository : IProductRepository
                 Name = p.Name,
                 Description = p.Description,
                 Price = p.Price,
-                Sku = p.Sku,
-                Stock = p.Stock,
                 IsActive = p.IsActive,
                 CategoryId = p.CategoryId,
                 CategoryName = p.Category!.Name,
