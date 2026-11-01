@@ -42,11 +42,16 @@ namespace PaginaVentasNet.Api.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
+                    b.Property<int?>("VariantId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("CartId", "ProductId")
+                    b.HasIndex("VariantId");
+
+                    b.HasIndex("CartId", "VariantId")
                         .IsUnique();
 
                     b.ToTable("CartItems");
@@ -692,7 +697,14 @@ namespace PaginaVentasNet.Api.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("PaginaVentasNet.Api.Modules.Catalog.Domain.ProductVariant", "Variant")
+                        .WithMany()
+                        .HasForeignKey("VariantId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
                     b.Navigation("Product");
+
+                    b.Navigation("Variant");
                 });
 
             modelBuilder.Entity("PaginaVentasNet.Api.Modules.Catalog.Domain.Category", b =>

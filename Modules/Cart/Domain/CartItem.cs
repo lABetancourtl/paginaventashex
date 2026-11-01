@@ -13,10 +13,12 @@ public class CartItem
     public int Quantity { get; private set; }
     public DateTime CreatedAtUtc { get; private set; }
     public Product? Product { get; private set; }
+    public int? VariantId { get; private set; }
+    public ProductVariant? Variant { get; private set; }
 
     private CartItem() { }
 
-    public static CartItem Create(int cartId, int productId, int quantity)
+    public static CartItem Create(int cartId, int productId, int quantity, int? variantId = null)
     {
         if (quantity <= 0)
             throw new ArgumentException("La cantidad debe ser mayor a cero.");
@@ -25,6 +27,7 @@ public class CartItem
         {
             CartId = cartId,
             ProductId = productId,
+            VariantId = variantId,
             Quantity = quantity,
             CreatedAtUtc = DateTime.UtcNow
         };
