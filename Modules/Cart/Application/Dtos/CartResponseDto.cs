@@ -13,8 +13,13 @@ public class CartItemResponseDto
 {
     public int Id { get; set; }
     public int ProductId { get; set; }
+    public int? VariantId { get; set; }
     public string ProductName { get; set; } = string.Empty;
     public string? ProductImageUrl { get; set; }
+    public string? SizeName { get; set; }
+    public string? ColorName { get; set; }
+    public string? ColorHexCode { get; set; }
+    public string? Sku { get; set; }
     public decimal ProductPrice { get; set; }
     public int? DiscountPercent { get; set; }
     public decimal FinalPrice => PriceCalculator.Final(ProductPrice, DiscountPercent);

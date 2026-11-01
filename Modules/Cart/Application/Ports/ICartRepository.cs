@@ -8,7 +8,7 @@ public interface ICartRepository
     Task<ShoppingCart?> GetByUsuarioIdAsync(int usuarioId);
     Task<CartResponseDto?> GetCartDtoByUsuarioIdAsync(int usuarioId);
     Task<CartItem?> GetItemByIdAsync(int itemId);
-    Task<CartItem?> GetItemByProductIdAsync(int cartId, int productId);
+    Task<CartItem?> GetItemByVariantIdAsync(int cartId, int variantId);
     Task AddAsync(ShoppingCart cart);
     Task AddItemAsync(CartItem item);
     Task RemoveItemAsync(CartItem item);

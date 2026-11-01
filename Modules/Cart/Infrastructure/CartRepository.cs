@@ -34,11 +34,19 @@ public class CartRepository : ICartRepository
                 {
                     Id = i.Id,
                     ProductId = i.ProductId,
+                    VariantId = i.VariantId,
                     ProductName = i.Product!.Name,
                     ProductImageUrl = i.Product.Media
                         .Where(m => m.MediaType == MediaType.Image && m.DisplayOrder == 1)
                         .Select(m => m.Url)
                         .FirstOrDefault(),
+                    SizeName = i.Variant == null || i.Variant.Size == null
+                        ? null : i.Variant.Size.Name,
+                    ColorName = i.Variant == null || i.Variant.Color == null
+                        ? null : i.Variant.Color.Name,
+                    ColorHexCode = i.Variant == null || i.Variant.Color == null
+                        ? null : i.Variant.Color.HexCode,
+                    Sku = i.Variant == null ? null : i.Variant.Sku,
                     ProductPrice = i.Product.Price,
                     DiscountPercent = i.Product.DiscountPercent,
                     Quantity = i.Quantity
@@ -52,10 +60,10 @@ public class CartRepository : ICartRepository
         return await _context.CartItems.FindAsync(itemId);
     }
 
-    public async Task<CartItem?> GetItemByProductIdAsync(int cartId, int productId)
+    public async Task<CartItem?> GetItemByVariantIdAsync(int cartId, int variantId)
     {
         return await _context.CartItems
-            .FirstOrDefaultAsync(i => i.CartId == cartId && i.ProductId == productId);
+            .FirstOrDefaultAsync(i => i.CartId == cartId && i.VariantId == variantId);
     }
 
     public async Task AddAsync(ShoppingCart cart)
