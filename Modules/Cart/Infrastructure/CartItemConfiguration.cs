@@ -16,7 +16,7 @@ public class CartItemConfiguration : IEntityTypeConfiguration<CartItem>
         builder.HasOne(i => i.Variant)
             .WithMany()
             .HasForeignKey(i => i.VariantId)
-            .IsRequired(false)
+            .IsRequired()
             .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasIndex(i => new { i.CartId, i.VariantId })

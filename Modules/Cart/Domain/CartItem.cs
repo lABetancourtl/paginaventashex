@@ -13,15 +13,18 @@ public class CartItem
     public int Quantity { get; private set; }
     public DateTime CreatedAtUtc { get; private set; }
     public Product? Product { get; private set; }
-    public int? VariantId { get; private set; }
+    public int VariantId { get; private set; }
     public ProductVariant? Variant { get; private set; }
 
     private CartItem() { }
 
-    public static CartItem Create(int cartId, int productId, int quantity, int? variantId = null)
+    public static CartItem Create(int cartId, int productId, int quantity, int variantId)
     {
         if (quantity <= 0)
             throw new ArgumentException("La cantidad debe ser mayor a cero.");
+
+        if (variantId <= 0)
+            throw new ArgumentException("La variante es obligatoria.");
 
         return new CartItem
         {

@@ -13,7 +13,7 @@ public class CartItemResponseDto
 {
     public int Id { get; set; }
     public int ProductId { get; set; }
-    public int? VariantId { get; set; }
+    public int VariantId { get; set; }
     public string ProductName { get; set; } = string.Empty;
     public string? ProductImageUrl { get; set; }
     public string? SizeName { get; set; }

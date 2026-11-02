@@ -30,11 +30,7 @@ public class UpdateCartItemUseCase
             throw new InvalidOperationException(
                 $"No existe el item con Id '{itemId}' en tu carrito.");
 
-        if (item.VariantId is null)
-            throw new InvalidOperationException(
-                "Este item no tiene una variante asociada. Elimínalo del carrito y vuelve a agregarlo.");
-
-        var variant = await _variantRepository.GetEntityByIdAsync(item.VariantId.Value);
+        var variant = await _variantRepository.GetEntityByIdAsync(item.VariantId);
 
         if (variant is null || !variant.IsActive)
             throw new InvalidOperationException(

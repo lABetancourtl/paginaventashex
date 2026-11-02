@@ -42,7 +42,7 @@ namespace PaginaVentasNet.Api.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("VariantId")
+                    b.Property<int>("VariantId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -572,6 +572,16 @@ namespace PaginaVentasNet.Api.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<decimal>("BasePrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("ColorName")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int?>("DiscountPercent")
+                        .HasColumnType("integer");
+
                     b.Property<int>("OrderId")
                         .HasColumnType("integer");
 
@@ -589,11 +599,25 @@ namespace PaginaVentasNet.Api.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("integer");
 
+                    b.Property<string>("SizeName")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Sku")
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<int?>("VariantId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderItems");
+                    b.ToTable("OrderItems", t =>
+                        {
+                            t.HasCheckConstraint("CK_OrderItems_DiscountPercent", "\"DiscountPercent\" IS NULL OR (\"DiscountPercent\" BETWEEN 1 AND 99)");
+                        });
                 });
 
             modelBuilder.Entity("PaginaVentasNet.Api.Modules.Payments.Domain.PaymentTransaction", b =>
@@ -700,7 +724,8 @@ namespace PaginaVentasNet.Api.Migrations
                     b.HasOne("PaginaVentasNet.Api.Modules.Catalog.Domain.ProductVariant", "Variant")
                         .WithMany()
                         .HasForeignKey("VariantId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Product");
 
