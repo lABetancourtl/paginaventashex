@@ -72,10 +72,18 @@ public class ProcessWebhookUseCase
 
         var order = await _orderRepository.GetEntityByIdAsync(orderId.Value);
 
-        if (order is null || order.Status != Orders.Domain.Enums.OrderStatus.PendientePago)
+        if (order is null)
             return;
 
-        order.ConfirmPayment();
-        await _orderRepository.SaveChangesAsync();
+        if (order.Status == Orders.Domain.Enums.OrderStatus.PendientePago)
+        {
+            order.ConfirmPayment();
+            await _orderRepository.SaveChangesAsync();
+        }
+        else if (order.Status == Orders.Domain.Enums.OrderStatus.Cancelado)
+        {
+            order.RegisterPaymentAfterCancellation();
+            await _orderRepository.SaveChangesAsync();
+        }
     }
 }

@@ -33,6 +33,17 @@ public class ProductVariantRepository : IProductVariantRepository
             .ToListAsync();
     }
 
+    public async Task<List<ProductVariant>> GetByIdsWithAttributesAsync(IEnumerable<int> ids)
+    {
+        var idList = ids.ToList();
+
+        return await _context.ProductVariants
+            .Include(v => v.Size)
+            .Include(v => v.Color)
+            .Where(v => idList.Contains(v.Id))
+            .ToListAsync();
+    }
+
     public async Task<List<ProductVariantResponseDto>> GetAllDtosByProductIdAsync(int productId)
     {
         return await _context.ProductVariants

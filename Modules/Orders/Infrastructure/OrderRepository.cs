@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
 using PaginaVentasNet.Api.Data;
 using PaginaVentasNet.Api.Modules.Orders.Application.Dtos;
@@ -16,6 +17,41 @@ public class OrderRepository : IOrderRepository
         _context = context;
     }
 
+    /// <summary>
+    /// Única proyección de pedido a su respuesta. Las cuatro consultas la comparten,
+    /// así un campo nuevo se agrega en un solo lugar.
+    /// </summary>
+    private static readonly Expression<Func<Order, OrderResponseDto>> ToResponseDto = o => new OrderResponseDto
+    {
+        Id = o.Id,
+        Status = o.Status,
+        Total = o.Total,
+        DepartamentoNombre = o.DepartamentoNombre,
+        MunicipioNombre = o.MunicipioNombre,
+        DireccionTexto = o.DireccionTexto,
+        InformacionAdicional = o.InformacionAdicional,
+        Barrio = o.Barrio,
+        NombreQuienRecibe = o.NombreQuienRecibe,
+        CreatedAtUtc = o.CreatedAtUtc,
+        RefundStatus = o.RefundStatus,
+        RefundedAtUtc = o.RefundedAtUtc,
+        Items = o.Items.Select(i => new OrderItemResponseDto
+        {
+            Id = i.Id,
+            ProductId = i.ProductId,
+            VariantId = i.VariantId,
+            ProductName = i.ProductName,
+            SizeName = i.SizeName,
+            ColorName = i.ColorName,
+            Sku = i.Sku,
+            BasePrice = i.BasePrice,
+            DiscountPercent = i.DiscountPercent,
+            ProductPrice = i.ProductPrice,
+            Quantity = i.Quantity,
+            Subtotal = i.ProductPrice * i.Quantity
+        }).ToList()
+    };
+
     public async Task AddAsync(Order order)
     {
         await _context.Orders.AddAsync(order);
@@ -32,28 +68,7 @@ public class OrderRepository : IOrderRepository
     {
         return await _context.Orders
             .Where(o => o.Id == id && o.UsuarioId == usuarioId)
-            .Select(o => new OrderResponseDto
-            {
-                Id = o.Id,
-                Status = o.Status,
-                Total = o.Total,
-                DepartamentoNombre = o.DepartamentoNombre,
-                MunicipioNombre = o.MunicipioNombre,
-                DireccionTexto = o.DireccionTexto,
-                InformacionAdicional = o.InformacionAdicional,
-                Barrio = o.Barrio,
-                NombreQuienRecibe = o.NombreQuienRecibe,
-                CreatedAtUtc = o.CreatedAtUtc,
-                Items = o.Items.Select(i => new OrderItemResponseDto
-                {
-                    Id = i.Id,
-                    ProductId = i.ProductId,
-                    ProductName = i.ProductName,
-                    ProductPrice = i.ProductPrice,
-                    Quantity = i.Quantity,
-                    Subtotal = i.Subtotal
-                }).ToList()
-            })
+            .Select(ToResponseDto)
             .FirstOrDefaultAsync();
     }
 
@@ -62,60 +77,31 @@ public class OrderRepository : IOrderRepository
         return await _context.Orders
             .Where(o => o.UsuarioId == usuarioId)
             .OrderByDescending(o => o.CreatedAtUtc)
-            .Select(o => new OrderResponseDto
-            {
-                Id = o.Id,
-                Status = o.Status,
-                Total = o.Total,
-                DepartamentoNombre = o.DepartamentoNombre,
-                MunicipioNombre = o.MunicipioNombre,
-                DireccionTexto = o.DireccionTexto,
-                InformacionAdicional = o.InformacionAdicional,
-                Barrio = o.Barrio,
-                NombreQuienRecibe = o.NombreQuienRecibe,
-                CreatedAtUtc = o.CreatedAtUtc,
-                Items = o.Items.Select(i => new OrderItemResponseDto
-                {
-                    Id = i.Id,
-                    ProductId = i.ProductId,
-                    ProductName = i.ProductName,
-                    ProductPrice = i.ProductPrice,
-                    Quantity = i.Quantity,
-                    Subtotal = i.Subtotal
-                }).ToList()
-            })
+            .Select(ToResponseDto)
             .ToListAsync();
     }
 
-    
     public async Task<List<OrderResponseDto>> GetAllAsync()
     {
         return await _context.Orders
-            .Where(o => o.Status == OrderStatus.Confirmado || 
+            .Where(o => o.Status == OrderStatus.Confirmado ||
                         o.Status == OrderStatus.Enviado)
             .OrderByDescending(o => o.CreatedAtUtc)
-            .Select(o => new OrderResponseDto
-            {
-                Id = o.Id,
-                Status = o.Status,
-                Total = o.Total,
-                DepartamentoNombre = o.DepartamentoNombre,
-                MunicipioNombre = o.MunicipioNombre,
-                DireccionTexto = o.DireccionTexto,
-                InformacionAdicional = o.InformacionAdicional,
-                Barrio = o.Barrio,
-                NombreQuienRecibe = o.NombreQuienRecibe,
-                CreatedAtUtc = o.CreatedAtUtc,
-                Items = o.Items.Select(i => new OrderItemResponseDto
-                {
-                    Id = i.Id,
-                    ProductId = i.ProductId,
-                    ProductName = i.ProductName,
-                    ProductPrice = i.ProductPrice,
-                    Quantity = i.Quantity,
-                    Subtotal = i.Subtotal
-                }).ToList()
-            })
+            .Select(ToResponseDto)
+            .ToListAsync();
+    }
+
+    public async Task<List<OrderResponseDto>> GetByRefundStatusAsync(RefundStatus status)
+    {
+        var query = _context.Orders.Where(o => o.RefundStatus == status);
+
+        // Pendientes: las más antiguas primero. Completadas: las más recientes primero.
+        query = status == RefundStatus.Completed
+            ? query.OrderByDescending(o => o.RefundedAtUtc)
+            : query.OrderBy(o => o.CreatedAtUtc);
+
+        return await query
+            .Select(ToResponseDto)
             .ToListAsync();
     }
 

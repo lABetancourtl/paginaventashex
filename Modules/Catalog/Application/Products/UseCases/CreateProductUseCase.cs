@@ -54,10 +54,7 @@ public class CreateProductUseCase
 
         var sku = dto.Sku.Trim().ToUpper();
 
-        var skuExists = await _productRepository.ExistsBySkuAsync(sku)
-                        || await _variantRepository.ExistsBySkuAsync(sku);
-
-        if (skuExists)
+        if (await _variantRepository.ExistsBySkuAsync(sku))
             throw new InvalidOperationException(
                 $"Ya existe un producto o una variante con el SKU '{sku}'.");
 
@@ -65,11 +62,9 @@ public class CreateProductUseCase
             dto.Name,
             dto.Description,
             dto.Price,
-            sku,
-            dto.Stock,
             dto.CategoryId);
 
-        product.AddDefaultVariant();
+        product.AddDefaultVariant(sku, dto.Stock);
 
         await _productRepository.AddAsync(product);
         await _productRepository.SaveChangesAsync();

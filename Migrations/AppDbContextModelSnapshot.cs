@@ -184,20 +184,9 @@ namespace PaginaVentasNet.Api.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Sku")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<int>("Stock")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
-
-                    b.HasIndex("Sku")
-                        .IsUnique();
 
                     b.ToTable("Products", t =>
                         {
@@ -548,6 +537,14 @@ namespace PaginaVentasNet.Api.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<string>("RefundStatus")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<DateTime?>("RefundedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -561,7 +558,10 @@ namespace PaginaVentasNet.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Orders");
+                    b.ToTable("Orders", t =>
+                        {
+                            t.HasCheckConstraint("CK_Orders_RefundStatus", "\"RefundStatus\" = 'NotRequired' OR \"Status\" = 'Cancelado'");
+                        });
                 });
 
             modelBuilder.Entity("PaginaVentasNet.Api.Modules.Orders.Domain.OrderItem", b =>

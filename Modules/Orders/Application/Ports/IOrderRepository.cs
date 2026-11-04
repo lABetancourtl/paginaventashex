@@ -1,5 +1,6 @@
 using PaginaVentasNet.Api.Modules.Orders.Application.Dtos;
 using PaginaVentasNet.Api.Modules.Orders.Domain;
+using PaginaVentasNet.Api.Modules.Orders.Domain.Enums;
 
 namespace PaginaVentasNet.Api.Modules.Orders.Application.Ports;
 
@@ -10,5 +11,6 @@ public interface IOrderRepository
     Task<OrderResponseDto?> GetByIdAsync(int id, int usuarioId);
     Task<List<OrderResponseDto>> GetByUsuarioIdAsync(int usuarioId);
     Task<List<OrderResponseDto>> GetAllAsync();
+    Task<List<OrderResponseDto>> GetByRefundStatusAsync(RefundStatus status);
     Task SaveChangesAsync();
 }

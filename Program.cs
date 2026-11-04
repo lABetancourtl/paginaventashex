@@ -207,6 +207,7 @@ builder.Services.AddScoped<IOrderRepository, OrderRepository>();
 builder.Services.AddScoped<CreateOrderUseCase>();
 builder.Services.AddScoped<GetOrdersUseCase>();
 builder.Services.AddScoped<CancelOrderUseCase>();
+builder.Services.AddScoped<MarkOrderRefundedUseCase>();
 builder.Services.AddScoped<UpdateOrderStatusUseCase>();
 
 // Payments

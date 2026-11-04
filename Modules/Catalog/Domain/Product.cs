@@ -1,5 +1,3 @@
-using PaginaVentasNet.Api.Modules.Catalog.Domain.Enums;
-
 namespace PaginaVentasNet.Api.Modules.Catalog.Domain;
 
 public class Product
@@ -8,8 +6,6 @@ public class Product
     public string Name { get; private set; } = string.Empty;
     public string Description { get; private set; } = string.Empty;
     public decimal Price { get; private set; }
-    public string Sku { get; private set; } = string.Empty;
-    public int Stock { get; private set; }
     public bool IsActive { get; private set; }
     public int CategoryId { get; private set; }
     public Category? Category { get; private set; }
@@ -27,8 +23,6 @@ public class Product
         string name,
         string description,
         decimal price,
-        string sku,
-        int stock,
         int categoryId)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -37,26 +31,18 @@ public class Product
         if (price <= 0)
             throw new ArgumentException("El precio debe ser mayor a cero.");
 
-        if (stock < 0)
-            throw new ArgumentException("El stock no puede ser negativo.");
-
-        if (string.IsNullOrWhiteSpace(sku))
-            throw new ArgumentException("El SKU del producto es obligatorio.");
-
         return new Product
         {
             Name = name.Trim(),
             Description = description.Trim(),
             Price = price,
-            Sku = sku.Trim().ToUpper(),
-            Stock = stock,
             IsActive = false,
             CategoryId = categoryId,
             CreatedAtUtc = DateTime.UtcNow
         };
     }
 
-    public void Update(string name,string description,decimal price)
+    public void Update(string name, string description, decimal price)
     {
         if (string.IsNullOrWhiteSpace(name))
             throw new ArgumentException("El nombre del producto es obligatorio.");
@@ -64,18 +50,19 @@ public class Product
         if (price <= 0)
             throw new ArgumentException("El precio debe ser mayor a cero.");
 
-    Name = name.Trim();
-    Description = description.Trim();
-    Price = price;
+        Name = name.Trim();
+        Description = description.Trim();
+        Price = price;
     }
 
     /// <summary>
-    /// Agrega la variante inicial del producto, sin talla ni color, con el SKU y el stock del producto.
-    /// Se llama al crear el producto: toda la compra, el carrito y el stock trabajan sobre variantes.
+    /// Agrega la variante inicial del producto, sin talla ni color, con el SKU y el stock indicados.
+    /// Se llama al crear el producto: el carrito, el pedido y el stock trabajan sobre variantes.
+    /// El SKU y el stock se validan en la variante.
     /// </summary>
-    public void AddDefaultVariant()
+    public void AddDefaultVariant(string sku, int stock)
     {
-        Variants.Add(ProductVariant.Create(0, null, null, Sku, Stock));
+        Variants.Add(ProductVariant.Create(0, null, null, sku, stock));
     }
 
     public void Activate()
@@ -90,18 +77,6 @@ public class Product
         if (!IsActive)
             throw new InvalidOperationException("El producto ya está inactivo.");
         IsActive = false;
-    }
-
-    public void ReduceStock(int quantity)
-    {
-        if (quantity > Stock)
-            throw new InvalidOperationException("Stock insuficiente.");
-        Stock -= quantity;
-    }
-
-    public void RestoreStock(int quantity)
-    {
-        Stock += quantity;
     }
 
     public void ApplyDiscount(int percent)

@@ -31,17 +31,6 @@ public class ProductRepository : IProductRepository
     }
 
     /// <summary>
-    /// Verifica si existe un producto con el SKU especificado.
-    /// </summary>
-    /// <param name="sku">SKU del producto a verificar.</param>
-    /// <returns>True si el producto existe, false en caso contrario.</returns>
-    public async Task<bool> ExistsBySkuAsync(string sku)
-    {
-        return await _context.Products
-            .AnyAsync(p => p.Sku == sku);
-    }
-
-    /// <summary>
     /// Guarda los cambios realizados en el contexto de la base de datos.
     /// </summary>
     public async Task SaveChangesAsync()

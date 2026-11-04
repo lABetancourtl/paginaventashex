@@ -5,6 +5,7 @@ using PaginaVentasNet.Api.Common.Responses;
 using PaginaVentasNet.Api.Controllers;
 using PaginaVentasNet.Api.Modules.Orders.Application.Dtos;
 using PaginaVentasNet.Api.Modules.Orders.Application.UseCases;
+using PaginaVentasNet.Api.Modules.Orders.Domain.Enums;
 
 namespace PaginaVentasNet.Api.Modules.Orders.Presentation;
 
@@ -19,17 +20,20 @@ public class OrderController : ApiController
     private readonly GetOrdersUseCase _getOrdersUseCase;
     private readonly CancelOrderUseCase _cancelOrderUseCase;
     private readonly UpdateOrderStatusUseCase _updateOrderStatusUseCase;
+    private readonly MarkOrderRefundedUseCase _markOrderRefundedUseCase;
 
     public OrderController(
         CreateOrderUseCase createOrderUseCase,
         GetOrdersUseCase getOrdersUseCase,
         CancelOrderUseCase cancelOrderUseCase,
-        UpdateOrderStatusUseCase updateOrderStatusUseCase)
+        UpdateOrderStatusUseCase updateOrderStatusUseCase,
+        MarkOrderRefundedUseCase markOrderRefundedUseCase)
     {
         _createOrderUseCase = createOrderUseCase;
         _getOrdersUseCase = getOrdersUseCase;
         _cancelOrderUseCase = cancelOrderUseCase;
         _updateOrderStatusUseCase = updateOrderStatusUseCase;
+        _markOrderRefundedUseCase = markOrderRefundedUseCase;
     }
 
     /// <summary>
@@ -88,6 +92,64 @@ public class OrderController : ApiController
         {
             var usuarioId = GetUsuarioId();
             await _cancelOrderUseCase.ExecuteAsync(id, usuarioId);
+            return Success(true);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Failure<bool>("ORDER_ERROR", ex.Message, 400);
+        }
+    }
+
+    /// <summary>
+    /// Marca como devuelto el dinero de un pedido cancelado que estaba pagado. Solo Admin.
+    /// No mueve dinero: la devolución se hace en Wompi o por fuera, y aquí solo se deja constancia.
+    /// </summary>
+    [HttpPatch("{id}/refund")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<ApiResponse<bool>>> MarkRefunded(int id)
+    {
+        try
+        {
+            await _markOrderRefundedUseCase.ExecuteAsync(id);
+            return Success(true);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Failure<bool>("ORDER_ERROR", ex.Message, 400);
+        }
+    }
+
+    /// <summary>
+    /// Lista los pedidos cancelados según el estado de su devolución. Solo Admin.
+    /// Por defecto muestra las pendientes; con status=Completed, el historial de las ya hechas.
+    /// </summary>
+    [HttpGet("refunds")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<ApiResponse<List<OrderResponseDto>>>> GetRefunds(
+        [FromQuery] RefundStatus status = RefundStatus.Pending)
+    {
+        try
+        {
+            var orders = await _getOrdersUseCase.ExecuteByRefundStatusAsync(status);
+            return Success(orders);
+        }
+        catch (InvalidOperationException ex)
+        {
+            return Failure<List<OrderResponseDto>>("ORDER_ERROR", ex.Message, 400);
+        }
+    }
+
+    /// <summary>
+    /// Cancela el pedido de cualquier cliente. Solo Admin.
+    /// Restaura el stock y, si el pedido ya estaba pagado, lo deja con la devolución pendiente.
+    /// </summary>
+    [HttpPatch("{id}/admin-cancel")]
+    [Authorize(Roles = "Admin")]
+    public async Task<ActionResult<ApiResponse<bool>>> AdminCancel(int id)
+    {
+        try
+        {
+            await _cancelOrderUseCase.ExecuteAsAdminAsync(id);
             return Success(true);
         }
         catch (InvalidOperationException ex)

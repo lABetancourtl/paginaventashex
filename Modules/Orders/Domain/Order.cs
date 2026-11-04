@@ -12,8 +12,8 @@ public class Order
     public int UsuarioId { get; private set; }
     public OrderStatus Status { get; private set; }
     public decimal Total { get; private set; }
-
-    // Datos de entrega copiados de la dirección seleccionada
+    public RefundStatus RefundStatus { get; private set; } = RefundStatus.NotRequired;
+    public DateTime? RefundedAtUtc { get; private set; }
     public string DepartamentoNombre { get; private set; } = string.Empty;
     public string MunicipioNombre { get; private set; } = string.Empty;
     public string DireccionTexto { get; private set; } = string.Empty;
@@ -73,6 +73,14 @@ public class Order
             throw new InvalidOperationException(
                 "No se puede cambiar el estado de un pedido con pago pendiente.");
 
+        if (Status == OrderStatus.Enviado)
+            throw new InvalidOperationException(
+                "El pedido ya fue enviado.");
+
+        if (status != OrderStatus.Enviado)
+            throw new InvalidOperationException(
+                "Desde Confirmado solo se puede pasar a Enviado. Para cancelar, usa la cancelación del pedido.");
+
         Status = status;
     }
 
@@ -95,6 +103,39 @@ public class Order
             throw new InvalidOperationException(
                 "El pedido ya está cancelado.");
 
+        // Solo un pedido Confirmado ya está pagado: ese dinero hay que devolverlo.
+        RefundStatus = Status == OrderStatus.Confirmado
+            ? RefundStatus.Pending
+            : RefundStatus.NotRequired;
+
         Status = OrderStatus.Cancelado;
     }
+
+    public void MarkRefunded()
+    {
+        if (RefundStatus != RefundStatus.Pending)
+            throw new InvalidOperationException(
+                "El pedido no tiene una devolución pendiente.");
+
+        RefundStatus = RefundStatus.Completed;
+        RefundedAtUtc = DateTime.UtcNow;
+    }
+
+    /// <summary>
+    /// Se llama cuando llega un pago aprobado para un pedido que ya estaba cancelado:
+    /// el cliente pagó después de cancelar, así que ese dinero hay que devolverlo.
+    /// Si la devolución ya está pendiente o completada, no cambia nada, para que un
+    /// webhook repetido no deshaga el trabajo del admin.
+    /// </summary>
+    public void RegisterPaymentAfterCancellation()
+    {
+        if (Status != OrderStatus.Cancelado)
+            throw new InvalidOperationException(
+                "Solo un pedido cancelado puede recibir un pago tardío.");
+
+        if (RefundStatus == RefundStatus.NotRequired)
+            RefundStatus = RefundStatus.Pending;
+    }
+
+
 }

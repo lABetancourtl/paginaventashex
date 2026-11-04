@@ -19,6 +19,18 @@ public class OrderConfiguration : IEntityTypeConfiguration<Order>
             .IsRequired()
             .HasColumnType("decimal(18,2)");
 
+        builder.Property(o => o.RefundStatus)
+            .IsRequired()
+            .HasConversion<string>()
+            .HasMaxLength(20);
+
+        builder.Property(o => o.RefundedAtUtc);
+
+        // Una devolución solo existe en un pedido cancelado
+        builder.ToTable(t => t.HasCheckConstraint(
+            "CK_Orders_RefundStatus",
+            "\"RefundStatus\" = 'NotRequired' OR \"Status\" = 'Cancelado'"));
+
         builder.Property(o => o.DepartamentoNombre)
             .IsRequired()
             .HasMaxLength(100);
