@@ -349,6 +349,108 @@ namespace PaginaVentasNet.Api.Migrations
                     b.ToTable("Municipios");
                 });
 
+            modelBuilder.Entity("PaginaVentasNet.Api.Modules.Home.Domain.HomeSection", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreatedAtUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Title")
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("DisplayOrder");
+
+                    b.ToTable("HomeSections", t =>
+                        {
+                            t.HasCheckConstraint("CK_HomeSections_BannerSinTitulo", "\"Type\" = 'Products' OR (\"Title\" IS NULL AND \"CategoryId\" IS NULL)");
+                        });
+                });
+
+            modelBuilder.Entity("PaginaVentasNet.Api.Modules.Home.Domain.HomeSectionItem", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("MediaType")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("PublicId")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<int>("SectionId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.HasIndex("SectionId", "DisplayOrder");
+
+                    b.ToTable("HomeSectionItems");
+                });
+
+            modelBuilder.Entity("PaginaVentasNet.Api.Modules.Home.Domain.HomeSectionProduct", b =>
+                {
+                    b.Property<int>("SectionId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("DisplayOrder")
+                        .HasColumnType("integer");
+
+                    b.HasKey("SectionId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("SectionId", "DisplayOrder");
+
+                    b.ToTable("HomeSectionProducts");
+                });
+
             modelBuilder.Entity("PaginaVentasNet.Api.Modules.Identity.Domain.Direccion", b =>
                 {
                     b.Property<int>("Id")
@@ -796,6 +898,49 @@ namespace PaginaVentasNet.Api.Migrations
                     b.Navigation("Departamento");
                 });
 
+            modelBuilder.Entity("PaginaVentasNet.Api.Modules.Home.Domain.HomeSection", b =>
+                {
+                    b.HasOne("PaginaVentasNet.Api.Modules.Catalog.Domain.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("PaginaVentasNet.Api.Modules.Home.Domain.HomeSectionItem", b =>
+                {
+                    b.HasOne("PaginaVentasNet.Api.Modules.Catalog.Domain.Category", "Category")
+                        .WithMany()
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("PaginaVentasNet.Api.Modules.Home.Domain.HomeSection", null)
+                        .WithMany("Items")
+                        .HasForeignKey("SectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("PaginaVentasNet.Api.Modules.Home.Domain.HomeSectionProduct", b =>
+                {
+                    b.HasOne("PaginaVentasNet.Api.Modules.Catalog.Domain.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PaginaVentasNet.Api.Modules.Home.Domain.HomeSection", null)
+                        .WithMany("Products")
+                        .HasForeignKey("SectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("PaginaVentasNet.Api.Modules.Identity.Domain.Direccion", b =>
                 {
                     b.HasOne("PaginaVentasNet.Api.Modules.Geography.Domain.Departamento", "Departamento")
@@ -850,6 +995,13 @@ namespace PaginaVentasNet.Api.Migrations
             modelBuilder.Entity("PaginaVentasNet.Api.Modules.Geography.Domain.Departamento", b =>
                 {
                     b.Navigation("Municipios");
+                });
+
+            modelBuilder.Entity("PaginaVentasNet.Api.Modules.Home.Domain.HomeSection", b =>
+                {
+                    b.Navigation("Items");
+
+                    b.Navigation("Products");
                 });
 
             modelBuilder.Entity("PaginaVentasNet.Api.Modules.Identity.Domain.Usuario", b =>
