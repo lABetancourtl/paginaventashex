@@ -55,6 +55,9 @@ using PaginaVentasNet.Api.Modules.Catalog.Application.Colors.Ports;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Colors.UseCases;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Variants.Ports;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Variants.UseCases;
+using PaginaVentasNet.Api.Modules.Home.Application.Ports;
+using PaginaVentasNet.Api.Modules.Home.Infrastructure;
+using PaginaVentasNet.Api.Modules.Home.Application.UseCases;
 
 Env.Load(".env");
 
@@ -141,6 +144,13 @@ builder.Services.AddScoped<GetProductVariantsUseCase>();
 builder.Services.AddScoped<CreateProductVariantUseCase>();
 builder.Services.AddScoped<UpdateProductVariantUseCase>();
 builder.Services.AddScoped<ChangeProductVariantStatusUseCase>();
+builder.Services.AddScoped<IHomeSectionRepository, HomeSectionRepository>();
+builder.Services.AddScoped<GetHomeSectionsUseCase>();
+builder.Services.AddScoped<CreateHomeSectionUseCase>();
+builder.Services.AddScoped<UpdateHomeSectionUseCase>();
+builder.Services.AddScoped<ChangeHomeSectionStatusUseCase>();
+builder.Services.AddScoped<ReorderHomeSectionUseCase>();
+builder.Services.AddScoped<DeleteHomeSectionUseCase>();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<CreateProductUseCase>();
 builder.Services.AddScoped<UpdateProductUseCase>();
