@@ -47,7 +47,7 @@ public class DeleteProductMediaUseCase
         var deletedOrder = media.DisplayOrder;
         var deletedType = media.MediaType;
 
-        await _cloudinaryService.DeleteAsync(media.PublicId);
+        await _cloudinaryService.DeleteAsync(media.PublicId, media.MediaType);
         await _mediaRepository.RemoveAsync(media);
         await _mediaRepository.SaveChangesAsync();
 

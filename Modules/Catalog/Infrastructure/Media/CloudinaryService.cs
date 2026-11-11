@@ -26,8 +26,11 @@ public class CloudinaryService : ICloudinaryService
     }
 
     public async Task<(string Url, string PublicId)> UploadAsync(
-        IFormFile file, MediaType mediaType)
+        IFormFile file, MediaType mediaType, string folder)
     {
+        if (string.IsNullOrWhiteSpace(folder))
+            throw new ArgumentException("La carpeta de destino es obligatoria.");
+
         await using var stream = file.OpenReadStream();
 
         if (mediaType == MediaType.Image)
@@ -35,7 +38,7 @@ public class CloudinaryService : ICloudinaryService
             var uploadParams = new ImageUploadParams
             {
                 File = new FileDescription(file.FileName, stream),
-                Folder = "paginaventas/products"
+                Folder = folder
             };
 
             var result = await _cloudinary.UploadAsync(uploadParams);
@@ -51,7 +54,7 @@ public class CloudinaryService : ICloudinaryService
             var uploadParams = new VideoUploadParams
             {
                 File = new FileDescription(file.FileName, stream),
-                Folder = "paginaventas/products"
+                Folder = folder
             };
 
             var result = await _cloudinary.UploadAsync(uploadParams);
@@ -64,9 +67,15 @@ public class CloudinaryService : ICloudinaryService
         }
     }
 
-    public async Task DeleteAsync(string publicId)
+    public async Task DeleteAsync(string publicId, MediaType mediaType)
     {
-        var deleteParams = new DeletionParams(publicId);
+        var deleteParams = new DeletionParams(publicId)
+        {
+            ResourceType = mediaType == MediaType.Video
+                ? ResourceType.Video
+                : ResourceType.Image
+        };
+
         var result = await _cloudinary.DestroyAsync(deleteParams);
 
         if (result.Error is not null)
