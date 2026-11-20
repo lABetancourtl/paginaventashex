@@ -54,12 +54,7 @@ public class ProductRepository : IProductRepository
             .Where(p => p.Id == id);
 
         if (onlyVisible)
-        {
-            query = query
-                .Where(p => p.IsActive)
-                .Where(p => p.Category!.IsActive &&
-                           (p.Category.ParentCategory == null || p.Category.ParentCategory.IsActive));
-        }
+            query = query.WhereVisible();
 
         return await query
             .Select(p => new ProductResponseDto
@@ -128,6 +123,16 @@ public class ProductRepository : IProductRepository
     }
 
     /// <summary>
+    /// Indica si el producto se ve en la tienda: activo, y su subcategoría y su categoría principal también.
+    /// </summary>
+    public async Task<bool> IsVisibleAsync(int productId)
+    {
+        return await _context.Products
+            .WhereVisible()
+            .AnyAsync(p => p.Id == productId);
+    }
+
+    /// <summary>
     /// Actualiza un producto.
     /// </summary>
     /// <param name="product">Producto a actualizar.</param>
@@ -149,9 +154,7 @@ public class ProductRepository : IProductRepository
 
         var query = _context.Products
             .Include(p => p.Category)
-            .Where(p => p.IsActive)
-            .Where(p => p.Category!.IsActive &&
-                    (p.Category.ParentCategory == null || p.Category.ParentCategory.IsActive))
+            .WhereVisible()
             .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(dto.Search))

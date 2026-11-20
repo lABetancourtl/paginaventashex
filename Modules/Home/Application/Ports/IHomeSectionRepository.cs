@@ -8,6 +8,7 @@ public interface IHomeSectionRepository
     Task AddAsync(HomeSection section);
     Task<HomeSection?> GetEntityByIdAsync(int id);
     Task<List<HomeSectionResponseDto>> GetAllDtosAsync();
+    Task<List<HomePageSectionDto>> GetPublicSectionsAsync();
     Task<int> GetNextDisplayOrderAsync();
     Task<HomeSection?> GetByDisplayOrderAsync(int displayOrder);
     Task<List<HomeSection>> GetWithOrderGreaterThanAsync(int displayOrder);

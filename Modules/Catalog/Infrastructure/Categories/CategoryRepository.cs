@@ -46,9 +46,8 @@ public class CategoryRepository : ICategoryRepository
     public async Task<bool> ExistsActiveBySlugAsync(string slug)
     {
         return await _context.Categories
-            .AnyAsync(c => c.Slug == slug
-                        && c.IsActive
-                        && (c.ParentCategory == null || c.ParentCategory.IsActive));
+            .WhereVisible()
+            .AnyAsync(c => c.Slug == slug);
     }
 
     /// <summary>

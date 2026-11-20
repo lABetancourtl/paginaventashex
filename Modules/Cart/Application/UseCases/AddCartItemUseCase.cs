@@ -1,7 +1,6 @@
 using PaginaVentasNet.Api.Modules.Cart.Application.Dtos;
 using PaginaVentasNet.Api.Modules.Cart.Application.Ports;
 using PaginaVentasNet.Api.Modules.Cart.Domain;
-using PaginaVentasNet.Api.Modules.Catalog.Application.Categories.Ports;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Products.Ports;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Variants.Ports;
 
@@ -9,7 +8,8 @@ namespace PaginaVentasNet.Api.Modules.Cart.Application.UseCases;
 
 /// <summary>
 /// Caso de uso para agregar una variante de producto al carrito.
-/// La variante debe estar activa, y su producto, su subcategoría y su categoría principal también.
+/// La variante debe estar activa y su producto debe ser visible en la tienda
+/// (producto, subcategoría y categoría principal activos).
 /// Si la variante ya está en el carrito, suma la cantidad.
 /// Si el usuario no tiene carrito, lo crea automáticamente.
 /// </summary>
@@ -18,18 +18,15 @@ public class AddCartItemUseCase
     private readonly ICartRepository _cartRepository;
     private readonly IProductRepository _productRepository;
     private readonly IProductVariantRepository _variantRepository;
-    private readonly ICategoryRepository _categoryRepository;
 
     public AddCartItemUseCase(
         ICartRepository cartRepository,
         IProductRepository productRepository,
-        IProductVariantRepository variantRepository,
-        ICategoryRepository categoryRepository)
+        IProductVariantRepository variantRepository)
     {
         _cartRepository = cartRepository;
         _productRepository = productRepository;
         _variantRepository = variantRepository;
-        _categoryRepository = categoryRepository;
     }
 
     public async Task ExecuteAsync(int usuarioId, AddCartItemDto dto)
@@ -41,12 +38,7 @@ public class AddCartItemUseCase
         if (variant is null || !variant.IsActive)
             throw new InvalidOperationException(unavailable);
 
-        var product = await _productRepository.GetEntityByIdAsync(variant.ProductId);
-
-        if (product is null || !product.IsActive)
-            throw new InvalidOperationException(unavailable);
-
-        if (!await IsCategoryVisibleAsync(product.CategoryId))
+        if (!await _productRepository.IsVisibleAsync(variant.ProductId))
             throw new InvalidOperationException(unavailable);
 
         if (dto.Quantity > variant.Stock)
@@ -76,28 +68,10 @@ public class AddCartItemUseCase
         }
         else
         {
-            var item = CartItem.Create(cart.Id, product.Id, dto.Quantity, variant.Id);
+            var item = CartItem.Create(cart.Id, variant.ProductId, dto.Quantity, variant.Id);
             await _cartRepository.AddItemAsync(item);
         }
 
         await _cartRepository.SaveChangesAsync();
-    }
-
-    /// <summary>
-    /// Misma regla del catálogo: la subcategoría y su categoría principal deben estar activas.
-    /// </summary>
-    private async Task<bool> IsCategoryVisibleAsync(int categoryId)
-    {
-        var category = await _categoryRepository.GetEntityByIdAsync(categoryId);
-
-        if (category is null || !category.IsActive)
-            return false;
-
-        if (category.ParentCategoryId is null)
-            return true;
-
-        var parent = await _categoryRepository.GetEntityByIdAsync(category.ParentCategoryId.Value);
-
-        return parent is not null && parent.IsActive;
     }
 }

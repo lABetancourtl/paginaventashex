@@ -1,5 +1,4 @@
 using PaginaVentasNet.Api.Modules.Cart.Application.Ports;
-using PaginaVentasNet.Api.Modules.Catalog.Application.Categories.Ports;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Products.Ports;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Variants.Ports;
 using PaginaVentasNet.Api.Modules.Catalog.Domain;
@@ -23,22 +22,19 @@ public class CreateOrderUseCase
     private readonly IDireccionRepository _direccionRepository;
     private readonly IProductRepository _productRepository;
     private readonly IProductVariantRepository _variantRepository;
-    private readonly ICategoryRepository _categoryRepository;
 
     public CreateOrderUseCase(
         IOrderRepository orderRepository,
         ICartRepository cartRepository,
         IDireccionRepository direccionRepository,
         IProductRepository productRepository,
-        IProductVariantRepository variantRepository,
-        ICategoryRepository categoryRepository)
+        IProductVariantRepository variantRepository)
     {
         _orderRepository = orderRepository;
         _cartRepository = cartRepository;
         _direccionRepository = direccionRepository;
         _productRepository = productRepository;
         _variantRepository = variantRepository;
-        _categoryRepository = categoryRepository;
     }
 
     public async Task<int> ExecuteAsync(int usuarioId, CreateOrderDto dto)
@@ -87,7 +83,7 @@ public class CreateOrderUseCase
 
             var label = Describe(product.Name, variant);
 
-            if (!variant.IsActive || !product.IsActive || !await IsCategoryVisibleAsync(product.CategoryId))
+            if (!variant.IsActive || !await _productRepository.IsVisibleAsync(product.Id))
                 throw new InvalidOperationException(
                     $"'{label}' ya no está disponible. Elimínalo del carrito e intenta de nuevo.");
 
@@ -119,24 +115,6 @@ public class CreateOrderUseCase
         await _orderRepository.SaveChangesAsync();
 
         return order.Id;
-    }
-
-    /// <summary>
-    /// Misma regla del catálogo y del carrito: la subcategoría y su categoría principal deben estar activas.
-    /// </summary>
-    private async Task<bool> IsCategoryVisibleAsync(int categoryId)
-    {
-        var category = await _categoryRepository.GetEntityByIdAsync(categoryId);
-
-        if (category is null || !category.IsActive)
-            return false;
-
-        if (category.ParentCategoryId is null)
-            return true;
-
-        var parent = await _categoryRepository.GetEntityByIdAsync(category.ParentCategoryId.Value);
-
-        return parent is not null && parent.IsActive;
     }
 
     private static string Describe(string productName, ProductVariant variant)

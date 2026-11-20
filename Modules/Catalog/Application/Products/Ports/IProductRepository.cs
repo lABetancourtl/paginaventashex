@@ -11,6 +11,7 @@ public interface IProductRepository
     Task AddAsync(Product product);
     Task SaveChangesAsync();
     Task<ProductResponseDto?> GetByIdAsync(int id, bool onlyVisible = false);       
+    Task<bool> IsVisibleAsync(int productId);
     Task UpdateAsync(Product product);
     Task<Product?> GetEntityByIdAsync(int id);
     Task<PagedResultDto<ProductResponseDto>> SearchAsync(SearchProductsDto dto);
