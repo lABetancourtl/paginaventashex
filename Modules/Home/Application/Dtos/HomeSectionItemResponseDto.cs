@@ -12,4 +12,9 @@ public class HomeSectionItemResponseDto
     public string? CategoryName { get; set; }
     public string? CategorySlug { get; set; }
     public int DisplayOrder { get; set; }
+
+    /// <summary>
+    /// Imagen 4:5 para celular. La tienda solo la usa si el banner tiene un único medio.
+    /// </summary>
+    public string? MobileUrl { get; set; }
 }

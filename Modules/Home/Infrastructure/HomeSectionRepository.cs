@@ -76,6 +76,8 @@ public class HomeSectionRepository : IHomeSectionRepository
                         Id = i.Id,
                         Url = i.Url,
                         MediaType = i.MediaType,
+                        // Con varios medios el banner es un carrusel y no usa versión para celular
+                        MobileUrl = s.Items.Count == 1 ? i.MobileUrl : null,
                         CategorySlug = i.CategoryId != null && visibleCategoryIds.Contains(i.CategoryId.Value)
                             ? i.Category!.Slug : null,
                         CategoryName = i.CategoryId != null && visibleCategoryIds.Contains(i.CategoryId.Value)
@@ -108,7 +110,9 @@ public class HomeSectionRepository : IHomeSectionRepository
 
         // Una sección que se queda sin nada que mostrar no sale en la página
         return sections
-            .Where(s => s.Type == HomeSectionType.Banner ? s.Items.Count > 0 : s.Products.Count > 0)
+            .Where(s => s.Type == HomeSectionType.Banner || s.Title == HomeSection.IntroTitle
+                ? s.Items.Count > 0
+                : s.Products.Count > 0)
             .ToList();
     }
 

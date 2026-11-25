@@ -49,7 +49,8 @@ public class HomeSectionItemRepository : IHomeSectionItemRepository
                 CategoryId = i.CategoryId,
                 CategoryName = i.Category == null ? null : i.Category.Name,
                 CategorySlug = i.Category == null ? null : i.Category.Slug,
-                DisplayOrder = i.DisplayOrder
+                DisplayOrder = i.DisplayOrder,
+                MobileUrl = i.MobileUrl
             })
             .ToListAsync();
     }

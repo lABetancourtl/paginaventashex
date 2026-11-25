@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using PaginaVentasNet.Api.Common.Exceptions;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Media.Ports;
+using PaginaVentasNet.Api.Modules.Catalog.Domain.Enums;
 using PaginaVentasNet.Api.Modules.Home.Application.Ports;
 
 namespace PaginaVentasNet.Api.Modules.Home.Application.UseCases;
@@ -36,8 +37,12 @@ public class DeleteHomeSectionUseCase
             throw new AppException("HOME_SECTION_NOT_FOUND",
                 $"No se encontró la sección con Id {id}.", 404);
 
-        var files = (await _items.GetBySectionIdAsync(id))
+        var items = await _items.GetBySectionIdAsync(id);
+        var files = items
             .Select(i => (i.PublicId, i.MediaType))
+            .Concat(items
+                .Where(i => i.MobilePublicId is not null)
+                .Select(i => (i.MobilePublicId!, MediaType.Image)))
             .ToList();
 
         var deletedOrder = section.DisplayOrder;

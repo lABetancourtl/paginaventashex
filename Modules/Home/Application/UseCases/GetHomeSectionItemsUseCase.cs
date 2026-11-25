@@ -29,7 +29,7 @@ public class GetHomeSectionItemsUseCase
             throw new AppException("HOME_SECTION_NOT_FOUND",
                 $"No se encontró la sección con Id {sectionId}.", 404);
 
-        if (section.Type != HomeSectionType.Banner)
+        if (!section.HasItems)
             throw new AppException("HOME_SECTION_INVALID_TYPE",
                 "Solo los banners tienen medios.", 400);
 

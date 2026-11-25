@@ -58,6 +58,9 @@ using PaginaVentasNet.Api.Modules.Catalog.Application.Variants.UseCases;
 using PaginaVentasNet.Api.Modules.Home.Application.Ports;
 using PaginaVentasNet.Api.Modules.Home.Infrastructure;
 using PaginaVentasNet.Api.Modules.Home.Application.UseCases;
+using PaginaVentasNet.Api.Modules.Analytics.Application.Ports;
+using PaginaVentasNet.Api.Modules.Analytics.Application.UseCases;
+using PaginaVentasNet.Api.Modules.Analytics.Infrastructure;
 
 Env.Load(".env");
 
@@ -157,6 +160,8 @@ builder.Services.AddScoped<AddHomeSectionItemUseCase>();
 builder.Services.AddScoped<UpdateHomeSectionItemUseCase>();
 builder.Services.AddScoped<ReorderHomeSectionItemUseCase>();
 builder.Services.AddScoped<DeleteHomeSectionItemUseCase>();
+builder.Services.AddScoped<SetHomeSectionItemMobileUseCase>();
+builder.Services.AddScoped<DeleteHomeSectionItemMobileUseCase>();
 builder.Services.AddScoped<IHomeSectionProductRepository, HomeSectionProductRepository>();
 builder.Services.AddScoped<GetHomeSectionProductsUseCase>();
 builder.Services.AddScoped<SetHomeSectionProductsUseCase>();
@@ -237,6 +242,22 @@ builder.Services.AddScoped<GetPaymentInfoUseCase>();
 builder.Services.AddScoped<GetPaymentTransactionsUseCase>();
 builder.Services.AddScoped<IPaymentTransactionRepository, PaymentTransactionRepository>();
 
+// Analytics (tráfico desde Umami)
+builder.Services.AddMemoryCache();
+builder.Services.AddSingleton(UmamiOptions.FromEnvironment());
+builder.Services.AddHttpClient<IAnalyticsProvider, UmamiAnalyticsProvider>(client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(15);
+});
+builder.Services.AddScoped<IAnalyticsCatalogLookup, AnalyticsCatalogLookup>();
+builder.Services.AddScoped<GetTrafficSummaryUseCase>();
+builder.Services.AddScoped<GetTrafficTimeSeriesUseCase>();
+builder.Services.AddScoped<GetTrafficByHourUseCase>();
+builder.Services.AddScoped<GetProductViewsUseCase>();
+builder.Services.AddScoped<GetCategoryViewsUseCase>();
+builder.Services.AddScoped<GetAudienceUseCase>();
+builder.Services.AddScoped<GetRealtimeUseCase>();
+builder.Services.AddScoped<GetCatalogAlertsUseCase>();
 
 // Pokemon Api de prueba
 builder.Services.AddHttpClient<IPokemonProvider, PokeApiAdapter>();

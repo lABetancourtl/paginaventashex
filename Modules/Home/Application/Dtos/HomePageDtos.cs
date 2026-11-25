@@ -32,6 +32,12 @@ public class HomePageItemDto
     public string Url { get; set; } = string.Empty;
     public MediaType MediaType { get; set; }
 
+    /// <summary>
+    /// Imagen 4:5 para celular. Solo viene cuando el banner tiene un único medio;
+    /// si es null, en celular se usa Url.
+    /// </summary>
+    public string? MobileUrl { get; set; }
+
     /// <summary>Categoría a la que lleva el medio. Es null si no enlaza o si su categoría está desactivada.</summary>
     public string? CategorySlug { get; set; }
     public string? CategoryName { get; set; }

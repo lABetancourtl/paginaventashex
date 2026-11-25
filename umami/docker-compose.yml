@@ -1,0 +1,22 @@
+# Umami: estadísticas de tráfico de la tienda.
+# Usa una base de datos propia ("umami") en el mismo servidor PostgreSQL de la tienda.
+# Antes de levantarlo:  CREATE DATABASE umami;
+#
+#   UMAMI_DATABASE_URL=postgresql://usuario:clave@host:5432/umami \
+#   UMAMI_APP_SECRET=$(openssl rand -hex 32) \
+#   docker compose up -d
+#
+# Luego entra a http://localhost:3000 (admin / umami), cambia la clave, crea el sitio web
+# y un usuario con rol "view-only" para la API.
+services:
+  umami:
+    image: ghcr.io/umami-software/umami:postgresql-latest
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: ${UMAMI_DATABASE_URL}
+      APP_SECRET: ${UMAMI_APP_SECRET}
+    restart: always
+    # Si PostgreSQL corre en esta misma máquina, fuera de Docker
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

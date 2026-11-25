@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using PaginaVentasNet.Api.Common.Exceptions;
 using PaginaVentasNet.Api.Modules.Catalog.Application.Media.Ports;
+using PaginaVentasNet.Api.Modules.Catalog.Domain.Enums;
 using PaginaVentasNet.Api.Modules.Home.Application.Ports;
 
 namespace PaginaVentasNet.Api.Modules.Home.Application.UseCases;
@@ -37,6 +38,7 @@ public class DeleteHomeSectionItemUseCase
 
         var publicId = item.PublicId;
         var mediaType = item.MediaType;
+        var mobilePublicId = item.MobilePublicId;
         var deletedOrder = item.DisplayOrder;
 
         await _items.RemoveAsync(item);
@@ -55,6 +57,20 @@ public class DeleteHomeSectionItemUseCase
             _logger.LogWarning(ex,
                 "El medio {ItemId} se quitó, pero no se pudo borrar {PublicId} de Cloudinary.",
                 itemId, publicId);
+        }
+
+        if (mobilePublicId is null)
+            return;
+
+        try
+        {
+            await _cloudinary.DeleteAsync(mobilePublicId, MediaType.Image);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogWarning(ex,
+                "El medio {ItemId} se quitó, pero no se pudo borrar su imagen para celular {PublicId} de Cloudinary.",
+                itemId, mobilePublicId);
         }
     }
 }

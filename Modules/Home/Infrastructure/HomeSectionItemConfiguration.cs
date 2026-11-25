@@ -23,6 +23,12 @@ public class HomeSectionItemConfiguration : IEntityTypeConfiguration<HomeSection
             .HasConversion<string>()
             .HasMaxLength(20);
 
+        builder.Property(i => i.MobileUrl)
+            .HasMaxLength(500);
+
+        builder.Property(i => i.MobilePublicId)
+            .HasMaxLength(255);
+
         builder.Property(i => i.DisplayOrder)
             .IsRequired();
 

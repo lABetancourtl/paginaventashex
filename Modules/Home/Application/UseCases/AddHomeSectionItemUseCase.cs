@@ -56,11 +56,15 @@ public class AddHomeSectionItemUseCase
             throw new AppException("HOME_SECTION_NOT_FOUND",
                 $"No se encontró la sección con Id {sectionId}.", 404);
 
-        if (section.Type != HomeSectionType.Banner)
+        if (!section.HasItems)
             throw new AppException("HOME_SECTION_INVALID_TYPE",
                 "Solo los banners tienen medios.", 400);
 
         var existing = await _items.GetBySectionIdAsync(sectionId);
+
+        if (section.IsIntro && existing.Count >= HomeSection.MaxIntroItems)
+            throw new AppException("HOME_ITEM_LIMIT",
+                "La animación de entrada lleva una sola imagen. Quita la actual para subir otra.", 409);
 
         if (existing.Count >= HomeSection.MaxBannerItems)
             throw new AppException("HOME_ITEM_LIMIT",
@@ -71,6 +75,10 @@ public class AddHomeSectionItemUseCase
                 $"No existe la categoría con Id {dto.CategoryId}.", 400);
 
         var mediaType = ResolveMediaType(dto.File);
+
+        if (section.IsIntro && mediaType != MediaType.Image)
+            throw new AppException("HOME_ITEM_VALIDATION",
+                "La animación de entrada solo admite una imagen, no videos.", 400);
 
         string url;
         string publicId;

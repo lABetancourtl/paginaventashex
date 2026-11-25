@@ -23,19 +23,25 @@ public class HomeSectionItemController : ApiController
     private readonly UpdateHomeSectionItemUseCase _updateItemUseCase;
     private readonly ReorderHomeSectionItemUseCase _reorderItemUseCase;
     private readonly DeleteHomeSectionItemUseCase _deleteItemUseCase;
+    private readonly SetHomeSectionItemMobileUseCase _setMobileUseCase;
+    private readonly DeleteHomeSectionItemMobileUseCase _deleteMobileUseCase;
 
     public HomeSectionItemController(
         GetHomeSectionItemsUseCase getItemsUseCase,
         AddHomeSectionItemUseCase addItemUseCase,
         UpdateHomeSectionItemUseCase updateItemUseCase,
         ReorderHomeSectionItemUseCase reorderItemUseCase,
-        DeleteHomeSectionItemUseCase deleteItemUseCase)
+        DeleteHomeSectionItemUseCase deleteItemUseCase,
+        SetHomeSectionItemMobileUseCase setMobileUseCase,
+        DeleteHomeSectionItemMobileUseCase deleteMobileUseCase)
     {
         _getItemsUseCase = getItemsUseCase;
         _addItemUseCase = addItemUseCase;
         _updateItemUseCase = updateItemUseCase;
         _reorderItemUseCase = reorderItemUseCase;
         _deleteItemUseCase = deleteItemUseCase;
+        _setMobileUseCase = setMobileUseCase;
+        _deleteMobileUseCase = deleteMobileUseCase;
     }
 
     /// <summary>
@@ -123,6 +129,44 @@ public class HomeSectionItemController : ApiController
         try
         {
             await _deleteItemUseCase.ExecuteAsync(sectionId, itemId);
+            return Success(true);
+        }
+        catch (AppException ex)
+        {
+            return Failure<bool>(ex.Code, ex.Message, ex.StatusCode);
+        }
+    }
+
+    /// <summary>
+    /// Pone o reemplaza la imagen para celular (se entrega recortada a 4:5) del medio.
+    /// Solo si el banner tiene un único medio. multipart/form-data con el campo file.
+    /// </summary>
+    [HttpPut("{itemId:int}/mobile")]
+    [Consumes("multipart/form-data")]
+    [RequestSizeLimit(MaxUploadRequestBytes)]
+    public async Task<ActionResult<ApiResponse<HomeSectionItemResponseDto>>> SetMobile(
+        int sectionId, int itemId, [FromForm] SetHomeSectionItemMobileDto dto)
+    {
+        try
+        {
+            var item = await _setMobileUseCase.ExecuteAsync(sectionId, itemId, dto);
+            return Success(item);
+        }
+        catch (AppException ex)
+        {
+            return Failure<HomeSectionItemResponseDto>(ex.Code, ex.Message, ex.StatusCode);
+        }
+    }
+
+    /// <summary>
+    /// Quita la imagen para celular del medio. En celular se vuelve a ver la imagen principal.
+    /// </summary>
+    [HttpDelete("{itemId:int}/mobile")]
+    public async Task<ActionResult<ApiResponse<bool>>> DeleteMobile(int sectionId, int itemId)
+    {
+        try
+        {
+            await _deleteMobileUseCase.ExecuteAsync(sectionId, itemId);
             return Success(true);
         }
         catch (AppException ex)

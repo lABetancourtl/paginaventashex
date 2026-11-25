@@ -409,6 +409,14 @@ namespace PaginaVentasNet.Api.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
+                    b.Property<string>("MobilePublicId")
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("MobileUrl")
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)");
+
                     b.Property<string>("PublicId")
                         .IsRequired()
                         .HasMaxLength(255)

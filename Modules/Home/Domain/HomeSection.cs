@@ -14,6 +14,20 @@ public class HomeSection
     public const int MaxBannerItems = 4;
     public const int MaxTitleLength = 100;
 
+    /// <summary>
+    /// Título reservado de la sección que guarda la foto de la animación de entrada de la tienda.
+    /// Es una sección de productos (la base de datos no deja títulos en los banners) que, en vez
+    /// de productos, lleva una sola imagen en sus medios. La tienda no la muestra como bloque.
+    /// </summary>
+    public const string IntroTitle = "__intro__";
+    public const int MaxIntroItems = 1;
+
+    /// <summary>¿Es la sección de la animación de entrada?</summary>
+    public bool IsIntro => Type == HomeSectionType.Products && Title == IntroTitle;
+
+    /// <summary>¿Lleva medios? Los banners y la sección de la animación de entrada.</summary>
+    public bool HasItems => Type == HomeSectionType.Banner || IsIntro;
+
     public int Id { get; private set; }
     public HomeSectionType Type { get; private set; }
 
